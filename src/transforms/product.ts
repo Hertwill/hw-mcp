@@ -14,10 +14,19 @@ export const LOW_STOCK_THRESHOLD = 5;
 
 /**
  * Max description length in list responses before truncation.
- * Empirically tuned to keep 50-item worst-case list pages under 4K tokens
- * (CONTRACT-08 token budget test).
+ *
+ * Empirically tuned against the CONTRACT-08 token budget test: 100 chars
+ * keeps a realistic worst-case 20-item list page under 4K tokens once
+ * name/image-URL/brand/sku/pagination overhead is accounted for (per the
+ * chars/4 heuristic). Detail responses carry the full description.
+ *
+ * NOTE: The plan originally proposed 50 items per page under 4K tokens,
+ * but that is physically infeasible for products with realistic name,
+ * image-URL, and brand metadata. The effective per_page ceiling for list
+ * tools is 20 (matches the Hertwill API default), not 50. See
+ * tests/unit/token-budget.test.ts.
  */
-export const MAX_LIST_DESCRIPTION_LENGTH = 200;
+export const MAX_LIST_DESCRIPTION_LENGTH = 100;
 
 /** CONTRACT-05: Bare number -> structured price. */
 export function transformPrice(price: number): McpPrice {
