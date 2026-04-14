@@ -35,7 +35,7 @@ export function createGetProductHandler(deps: ToolDeps) {
           ? "no variations"
           : `${variationCount} variation${variationCount === 1 ? "" : "s"}`;
       const priceText = `€${detail.price.amount.toFixed(2)}`;
-      const text = `Product ${detail.id}: "${raw.data.name}" — ${priceText}, stock ${detail.stock.status}, ${variationText}.`;
+      const text = `Product ${detail.id}: "${raw.data.name}" — ${priceText}, stock ${detail.stock.stock_level}, ${variationText}.`;
       return {
         structuredContent: detail as unknown as Record<string, unknown>,
         content: [{ type: "text", text }],
