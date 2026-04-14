@@ -49,7 +49,7 @@ export function createGetProductHandler(deps: ToolDeps) {
       ) {
         mapped.content[0].text = `Retry after ${err.retryAfterSeconds}s. ${mapped.content[0].text}`;
       }
-      return mapped;
+      return mapped as CallToolResult;
     }
   };
 }
