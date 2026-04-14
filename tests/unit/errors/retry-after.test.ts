@@ -23,9 +23,12 @@ describe("HertwillApiError.retryAfterSeconds", () => {
   });
 
   it("leaves retryAfterSeconds undefined when neither header is present (e.g., 500)", () => {
-    const res = new Response(JSON.stringify({ error: { code: "INTERNAL", message: "boom" } }), {
-      status: 500,
-    });
+    const res = new Response(
+      JSON.stringify({ error: { code: "INTERNAL", message: "boom" } }),
+      {
+        status: 500,
+      },
+    );
     const err = HertwillApiError.fromResponse(res, {
       error: { code: "INTERNAL", message: "boom" },
     });
@@ -33,7 +36,13 @@ describe("HertwillApiError.retryAfterSeconds", () => {
   });
 
   it("does NOT serialize retryAfterSeconds via toJSON()", () => {
-    const err = new HertwillApiError(429, "RATE_LIMITED", "Too many", undefined, 9);
+    const err = new HertwillApiError(
+      429,
+      "RATE_LIMITED",
+      "Too many",
+      undefined,
+      9,
+    );
     const json = err.toJSON();
     expect(Object.keys(json).sort()).toEqual(["code", "message", "status"]);
     expect((json as Record<string, unknown>).retryAfterSeconds).toBeUndefined();

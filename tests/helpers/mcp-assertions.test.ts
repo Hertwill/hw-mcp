@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  expectStructuredAndText,
-  expectToolError,
-} from "./mcp-assertions.js";
+import { expectStructuredAndText, expectToolError } from "./mcp-assertions.js";
 
 describe("expectStructuredAndText", () => {
   it("passes when both structuredContent and non-empty text content are present", () => {

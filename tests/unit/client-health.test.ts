@@ -1,12 +1,9 @@
-import { describe, expect, it, beforeEach } from "vitest";
-import { http, HttpResponse } from "msw";
-import { mockServer } from "../mocks/server.js";
+import { HttpResponse, http } from "msw";
+import { beforeEach, describe, expect, it } from "vitest";
 import { HertwillClient } from "../../src/hertwill/client.js";
+import { authLimiter, publicLimiter } from "../../src/hertwill/rate-limiter.js";
 import { plainTextOkHealth } from "../mocks/handlers.js";
-import {
-  publicLimiter,
-  authLimiter,
-} from "../../src/hertwill/rate-limiter.js";
+import { mockServer } from "../mocks/server.js";
 
 const BASE_URL = "https://api.hertwill.com";
 
@@ -47,9 +44,7 @@ describe("HertwillClient.health()", () => {
   });
 
   it("returns {ok:false, latency_ms:null} when the network throws (simulated error)", async () => {
-    mockServer.use(
-      http.get(`${BASE_URL}/health`, () => HttpResponse.error()),
-    );
+    mockServer.use(http.get(`${BASE_URL}/health`, () => HttpResponse.error()));
     const result = await client.health();
     expect(result).toEqual({ ok: false, latency_ms: null });
   });
