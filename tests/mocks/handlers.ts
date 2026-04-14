@@ -480,3 +480,98 @@ export const plainTextOkHealth = () =>
     status: 200,
     headers: { "content-type": "text/plain" },
   });
+
+// ---------------------------------------------------------------------------
+// Phase 5 additions — authenticated-tool fixture factories
+// ---------------------------------------------------------------------------
+
+/** Simulate a 401 from Hertwill for any authenticated endpoint. */
+export const invalidKeyResponse401 = () =>
+  HttpResponse.json(
+    { error: { code: "UNAUTHORIZED", message: "Invalid API key" } },
+    { status: 401 },
+  );
+
+/** Empty import-list happy response (paginated envelope with 0 items). */
+export const emptyImportListResponse = () =>
+  HttpResponse.json(
+    {
+      data: [],
+      meta: {
+        pagination: { page: 1, per_page: 20, total: 0, page_count: 0 },
+        request_id: "req-import-empty",
+      },
+    },
+    { headers: { RateLimit: '"300-in-1min"; r=299; t=60' } },
+  );
+
+/**
+ * POST /v1/import-list/products — echo the submitted product_ids as
+ * `status: "added"`.
+ */
+export const addToImportListResponse = () =>
+  http.post(
+    `${BASE_URL}/v1/import-list/products`,
+    async ({ request }) => {
+      const body = (await request.json()) as { product_ids: number[] };
+      return HttpResponse.json(
+        {
+          data: body.product_ids.map((id) => ({
+            product_id: id,
+            status: "added" as const,
+          })),
+        },
+        { status: 201 },
+      );
+    },
+  );
+
+/** DELETE /v1/import-list/products/:productId — 204 no-content success. */
+export const removeFromImportListResponse204 = () =>
+  new HttpResponse(null, { status: 204 });
+
+/** POST /v1/sync/products — 202 accepted with job id in message. */
+export const syncProductsAcceptedResponse = (productId = 123) =>
+  HttpResponse.json(
+    {
+      data: {
+        product_id: productId,
+        status: "syncing",
+        message: `Sync started (job_id=job-${productId}-001)`,
+      },
+    },
+    { status: 202 },
+  );
+
+/** GET /v1/sync/jobs — paginated list of sync jobs (matches client.listSyncJobs). */
+export const syncJobsListResponse = (
+  jobs: Array<
+    Partial<{
+      product_id: number;
+      name: string | null;
+      status: "syncing" | "synced" | "sync-failed" | "not-synced";
+      started_at: string | null;
+      completed_at: string | null;
+      has_errors: boolean;
+    }>
+  > = [],
+) =>
+  HttpResponse.json({
+    data: jobs.map((j, i) => ({
+      product_id: j.product_id ?? 100 + i,
+      name: j.name ?? "Test Product",
+      status: j.status ?? "synced",
+      started_at: j.started_at ?? "2026-01-15T00:00:00Z",
+      completed_at: j.completed_at ?? "2026-01-15T00:01:00Z",
+      has_errors: j.has_errors ?? false,
+    })),
+    meta: {
+      pagination: {
+        page: 1,
+        per_page: 20,
+        total: jobs.length,
+        page_count: jobs.length === 0 ? 0 : 1,
+      },
+      request_id: "req-sync-jobs-list",
+    },
+  });
