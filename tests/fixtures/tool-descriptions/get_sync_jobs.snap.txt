@@ -1,0 +1,1 @@
+Return paginated sync job status for the authenticated store. Use to poll or review previously triggered syncs. Do NOT use to trigger a new sync (use sync_products) or to inspect the import list (use list_import_list). Returns a paginated envelope of {sync_job_id, product_id, status, created_at, finished_at, error}. Requires HERTWILL_API_KEY.

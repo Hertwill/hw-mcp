@@ -1,0 +1,1 @@
+Pure math utility: given cost, retail, ad spend, and VAT rate, return margin amount, margin %, and break-even ad-spend band. Makes zero API calls. Do NOT use when the user wants a real product evaluation (use evaluate_product) or to find products (use search_products). No auth required.

@@ -1,0 +1,1 @@
+Remove 1-50 products from the authenticated store's import list in a single batch call. Pass IDs in one call rather than looping. Do NOT use to view the current list (use list_import_list) or to add items (use add_to_import_list). Returns {removed, skipped, import_list_size}. Requires HERTWILL_API_KEY.

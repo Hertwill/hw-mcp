@@ -1,0 +1,1 @@
+Produce a factual structured viability scorecard for one product — margin inputs, shipping coverage, variant spread, and stock signal. Use when the user wants a comparable decision summary. Do NOT use when the user only wants product details (use get_product), pure margin math (use calculate_margin), or to find candidates first (use search_products). No auth required.

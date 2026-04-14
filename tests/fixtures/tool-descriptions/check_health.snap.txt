@@ -1,0 +1,1 @@
+Report server version, Hertwill API reachability, and remaining rate-limit budget for both the public (60/min) and authenticated (300/min) buckets. Use for connectivity and capacity diagnostics. Do NOT use to validate an API key (use check_auth). No auth required.

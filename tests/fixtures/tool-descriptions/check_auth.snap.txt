@@ -1,0 +1,1 @@
+Validate the configured HERTWILL_API_KEY and return store scope without leaking the key. Returns {authenticated, store_id, scopes, key_fingerprint} — the raw key is never echoed. Do NOT use to check server or rate-limit health (use check_health). Requires HERTWILL_API_KEY.
