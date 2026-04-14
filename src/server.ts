@@ -4,7 +4,11 @@ import { loadConfig } from "./config.js";
 import { HertwillClient } from "./hertwill/client.js";
 import { authLimiter, publicLimiter } from "./hertwill/rate-limiter.js";
 import { logger } from "./logger.js";
-import { registerPublicTools, type ToolDeps } from "./tools/index.js";
+import {
+  registerAuthenticatedTools,
+  registerPublicTools,
+  type ToolDeps,
+} from "./tools/index.js";
 import { RateResetTracker } from "./tools/rate-reset.js";
 import type { HealthCacheEntry } from "./tools/types.js";
 
@@ -71,5 +75,12 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
 
   registerPublicTools(server, deps);
   logger.info({ tools: 6 }, "Registered public Hertwill tools");
+
+  // D-24: register authenticated tools only when an API key is configured.
+  if (typeof apiKey === "string" && apiKey.length > 0) {
+    registerAuthenticatedTools(server, deps);
+    logger.info({ tools: 6 }, "Registered authenticated Hertwill tools");
+  }
+
   return server;
 }
