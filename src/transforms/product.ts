@@ -78,6 +78,42 @@ function truncateText(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength)}...`;
 }
 
+/**
+ * Normalize brand field to `{name, slug} | null`.
+ *
+ * The OpenAPI spec advertises an object, but the live search/list endpoints
+ * return a plain string (brand name). Accept both: for a string, populate
+ * both `name` and `slug` with that value so downstream filters keep working.
+ */
+function normalizeBrand(
+  brand:
+    | string
+    | { id?: unknown; name: string; slug: string }
+    | null
+    | undefined,
+): { name: string; slug: string } | null {
+  if (brand == null) return null;
+  if (typeof brand === "string") {
+    return { name: brand, slug: brand };
+  }
+  return { name: brand.name, slug: brand.slug };
+}
+
+/**
+ * Normalize a timestamp to an ISO-8601 string.
+ *
+ * Live Hertwill returns Unix epoch seconds as a number on some endpoints
+ * and ISO strings on others. Always emit ISO downstream so MCP tool output
+ * is agent-readable.
+ */
+function normalizeTimestamp(ts: string | number): string {
+  if (typeof ts === "number") {
+    // Treat as Unix epoch seconds (Hertwill convention)
+    return new Date(ts * 1000).toISOString();
+  }
+  return ts;
+}
+
 /** Transform a raw ProductListItem to MCP list-item shape. */
 export function transformProductListItem(
   item: ProductListItem,
@@ -94,14 +130,12 @@ export function transformProductListItem(
     price: transformPrice(item.price),
     sale_price: transformNullablePrice(item.sale_price),
     stock: transformStockInfo(item.stock_status, item.stock),
-    brand: item.brand
-      ? { name: item.brand.name, slug: item.brand.slug }
-      : null,
+    brand: normalizeBrand(item.brand),
     images: {
       featured: item.images.featured ?? null,
       gallery: item.images.gallery,
     },
-    created_at: item.created_at,
+    created_at: normalizeTimestamp(item.created_at),
   };
 }
 
