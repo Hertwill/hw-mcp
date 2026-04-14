@@ -1,0 +1,116 @@
+{
+  "data": {
+    "id": 1001,
+    "slug": "product-slug-1",
+    "name": "Product Name 1 - The Ultimate Edition",
+    "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Prem",
+    "sku": "SKU-1001",
+    "price": 7.3,
+    "sale_price": 6.9,
+    "stock": 51,
+    "stock_status": "instock",
+    "brand": {
+      "id": "brand-1",
+      "name": "Brand 1",
+      "slug": "brand-1",
+      "description": null,
+      "logo": null
+    },
+    "images": {
+      "featured": "https://cdn.example.com/products/1/featured.jpg",
+      "gallery": [
+        "https://cdn.example.com/products/1/g1.jpg",
+        "https://cdn.example.com/products/1/g2.jpg"
+      ]
+    },
+    "category": {
+      "id": "cat-1",
+      "name": "Category 1",
+      "slug": "category-1"
+    },
+    "collections": [],
+    "created_at": "2026-01-02T00:00:00.000Z",
+    "updated_at": "2026-04-01T00:00:00.000Z",
+    "shipping_regions": [
+      {
+        "code": "DE",
+        "name": "Germany"
+      },
+      {
+        "code": "FR",
+        "name": "France"
+      },
+      {
+        "code": "NL",
+        "name": "Netherlands"
+      }
+    ],
+    "variations": [
+      {
+        "id": 5001,
+        "name": "Red / Small",
+        "sku": "SKU-1001-RS",
+        "price": 12.99,
+        "sale_price": 9.99,
+        "image": "https://cdn.example.com/variations/5001.jpg",
+        "stock": 50,
+        "stock_status": "instock",
+        "attributes": [
+          {
+            "id": 1,
+            "name": "Color",
+            "value": "Red"
+          },
+          {
+            "id": 2,
+            "name": "Size",
+            "value": "Small"
+          }
+        ]
+      },
+      {
+        "id": 5002,
+        "name": "Red / Medium",
+        "sku": "SKU-1001-RM",
+        "price": 12.99,
+        "sale_price": null,
+        "image": null,
+        "stock": 3,
+        "stock_status": "instock",
+        "attributes": [
+          {
+            "name": "Color",
+            "value": "Red"
+          },
+          {
+            "name": "Size",
+            "value": "Medium"
+          }
+        ]
+      },
+      {
+        "id": 5003,
+        "name": "Blue / Large",
+        "sku": "SKU-1001-BL",
+        "price": 14.99,
+        "sale_price": null,
+        "image": null,
+        "stock": 0,
+        "stock_status": "outofstock",
+        "attributes": [
+          {
+            "name": "Color",
+            "value": "Blue"
+          },
+          {
+            "name": "Size",
+            "value": "Large"
+          }
+        ]
+      }
+    ]
+  },
+  "meta": {
+    "request_id": "req_fixture_detail_001"
+  }
+}

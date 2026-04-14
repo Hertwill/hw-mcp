@@ -1,0 +1,673 @@
+{
+  "data": [
+    {
+      "id": 1001,
+      "slug": "product-slug-1",
+      "name": "Product Name 1 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Prem",
+      "sku": "SKU-1001",
+      "price": 7.3,
+      "sale_price": 6.9,
+      "stock": 51,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-1",
+        "name": "Brand 1",
+        "slug": "brand-1",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/1/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/1/g1.jpg",
+          "https://cdn.example.com/products/1/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-02T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1002,
+      "slug": "product-slug-2",
+      "name": "Product Name 2 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product ",
+      "sku": "SKU-1002",
+      "price": 9.6,
+      "sale_price": null,
+      "stock": 52,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-2",
+        "name": "Brand 2",
+        "slug": "brand-2",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/2/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/2/g1.jpg",
+          "https://cdn.example.com/products/2/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-03T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1003,
+      "slug": "product-slug-3",
+      "name": "Product Name 3 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium ",
+      "sku": "SKU-1003",
+      "price": 11.9,
+      "sale_price": 10.7,
+      "stock": 3,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-3",
+        "name": "Brand 3",
+        "slug": "brand-3",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/3/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/3/g1.jpg",
+          "https://cdn.example.com/products/3/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-04T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1004,
+      "slug": "product-slug-4",
+      "name": "Product Name 4 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product desc",
+      "sku": "SKU-1004",
+      "price": 14.2,
+      "sale_price": null,
+      "stock": 0,
+      "stock_status": "outofstock",
+      "brand": {
+        "id": "brand-4",
+        "name": "Brand 4",
+        "slug": "brand-4",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/4/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/4/g1.jpg",
+          "https://cdn.example.com/products/4/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-05T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1005,
+      "slug": "product-slug-5",
+      "name": "Product Name 5 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium qual",
+      "sku": "SKU-1005",
+      "price": 16.5,
+      "sale_price": 14.5,
+      "stock": 55,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-0",
+        "name": "Brand 0",
+        "slug": "brand-0",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/5/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/5/g1.jpg",
+          "https://cdn.example.com/products/5/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-06T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1006,
+      "slug": "product-slug-6",
+      "name": "Product Name 6 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product descript",
+      "sku": "SKU-1006",
+      "price": 18.8,
+      "sale_price": null,
+      "stock": 3,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-1",
+        "name": "Brand 1",
+        "slug": "brand-1",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/6/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/6/g1.jpg",
+          "https://cdn.example.com/products/6/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-07T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1007,
+      "slug": "product-slug-7",
+      "name": "Product Name 7 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality ",
+      "sku": "SKU-1007",
+      "price": 21.1,
+      "sale_price": 18.3,
+      "stock": 57,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-2",
+        "name": "Brand 2",
+        "slug": "brand-2",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/7/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/7/g1.jpg",
+          "https://cdn.example.com/products/7/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-08T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1008,
+      "slug": "product-slug-8",
+      "name": "Product Name 8 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1008",
+      "price": 23.4,
+      "sale_price": null,
+      "stock": 0,
+      "stock_status": "outofstock",
+      "brand": {
+        "id": "brand-3",
+        "name": "Brand 3",
+        "slug": "brand-3",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/8/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/8/g1.jpg",
+          "https://cdn.example.com/products/8/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-09T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1009,
+      "slug": "product-slug-9",
+      "name": "Product Name 9 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1009",
+      "price": 25.7,
+      "sale_price": 22.1,
+      "stock": 3,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-4",
+        "name": "Brand 4",
+        "slug": "brand-4",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/9/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/9/g1.jpg",
+          "https://cdn.example.com/products/9/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-10T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1010,
+      "slug": "product-slug-10",
+      "name": "Product Name 10 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1010",
+      "price": 28,
+      "sale_price": null,
+      "stock": 60,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-0",
+        "name": "Brand 0",
+        "slug": "brand-0",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/10/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/10/g1.jpg",
+          "https://cdn.example.com/products/10/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-11T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1011,
+      "slug": "product-slug-11",
+      "name": "Product Name 11 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1011",
+      "price": 30.3,
+      "sale_price": 25.9,
+      "stock": 61,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-1",
+        "name": "Brand 1",
+        "slug": "brand-1",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/11/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/11/g1.jpg",
+          "https://cdn.example.com/products/11/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-12T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1012,
+      "slug": "product-slug-12",
+      "name": "Product Name 12 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1012",
+      "price": 32.6,
+      "sale_price": null,
+      "stock": 0,
+      "stock_status": "outofstock",
+      "brand": {
+        "id": "brand-2",
+        "name": "Brand 2",
+        "slug": "brand-2",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/12/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/12/g1.jpg",
+          "https://cdn.example.com/products/12/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-13T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1013,
+      "slug": "product-slug-13",
+      "name": "Product Name 13 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1013",
+      "price": 34.9,
+      "sale_price": 29.7,
+      "stock": 63,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-3",
+        "name": "Brand 3",
+        "slug": "brand-3",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/13/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/13/g1.jpg",
+          "https://cdn.example.com/products/13/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-14T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1014,
+      "slug": "product-slug-14",
+      "name": "Product Name 14 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1014",
+      "price": 37.2,
+      "sale_price": null,
+      "stock": 64,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-4",
+        "name": "Brand 4",
+        "slug": "brand-4",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/14/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/14/g1.jpg",
+          "https://cdn.example.com/products/14/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-15T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1015,
+      "slug": "product-slug-15",
+      "name": "Product Name 15 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1015",
+      "price": 39.5,
+      "sale_price": 33.5,
+      "stock": 3,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-0",
+        "name": "Brand 0",
+        "slug": "brand-0",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/15/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/15/g1.jpg",
+          "https://cdn.example.com/products/15/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-16T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1016,
+      "slug": "product-slug-16",
+      "name": "Product Name 16 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1016",
+      "price": 41.8,
+      "sale_price": null,
+      "stock": 0,
+      "stock_status": "outofstock",
+      "brand": {
+        "id": "brand-1",
+        "name": "Brand 1",
+        "slug": "brand-1",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/16/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/16/g1.jpg",
+          "https://cdn.example.com/products/16/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-17T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1017,
+      "slug": "product-slug-17",
+      "name": "Product Name 17 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1017",
+      "price": 44.1,
+      "sale_price": 37.3,
+      "stock": 67,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-2",
+        "name": "Brand 2",
+        "slug": "brand-2",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/17/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/17/g1.jpg",
+          "https://cdn.example.com/products/17/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-18T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1018,
+      "slug": "product-slug-18",
+      "name": "Product Name 18 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1018",
+      "price": 46.4,
+      "sale_price": null,
+      "stock": 3,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-3",
+        "name": "Brand 3",
+        "slug": "brand-3",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/18/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/18/g1.jpg",
+          "https://cdn.example.com/products/18/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-0",
+        "name": "Category 0",
+        "slug": "category-0"
+      },
+      "collections": [],
+      "created_at": "2026-01-19T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1019,
+      "slug": "product-slug-19",
+      "name": "Product Name 19 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1019",
+      "price": 48.7,
+      "sale_price": 41.1,
+      "stock": 69,
+      "stock_status": "instock",
+      "brand": {
+        "id": "brand-4",
+        "name": "Brand 4",
+        "slug": "brand-4",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/19/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/19/g1.jpg",
+          "https://cdn.example.com/products/19/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-1",
+        "name": "Category 1",
+        "slug": "category-1"
+      },
+      "collections": [],
+      "created_at": "2026-01-20T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 1020,
+      "slug": "product-slug-20",
+      "name": "Product Name 20 - The Ultimate Edition",
+      "description": "Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description Premium quality product description ",
+      "sku": "SKU-1020",
+      "price": 51,
+      "sale_price": null,
+      "stock": 0,
+      "stock_status": "outofstock",
+      "brand": {
+        "id": "brand-0",
+        "name": "Brand 0",
+        "slug": "brand-0",
+        "description": null,
+        "logo": null
+      },
+      "images": {
+        "featured": "https://cdn.example.com/products/20/featured.jpg",
+        "gallery": [
+          "https://cdn.example.com/products/20/g1.jpg",
+          "https://cdn.example.com/products/20/g2.jpg"
+        ]
+      },
+      "category": {
+        "id": "cat-2",
+        "name": "Category 2",
+        "slug": "category-2"
+      },
+      "collections": [],
+      "created_at": "2026-01-21T00:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "per_page": 20,
+      "total": 80,
+      "page_count": 4
+    },
+    "request_id": "req_fixture_list_001"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "data": [
+    {
+      "id": 2001,
+      "product_id": 1001,
+      "name": "Import Item 1",
+      "sku": "SKU-1001",
+      "price": 13,
+      "sale_price": 6,
+      "stock_status": "instock",
+      "status": "approval-required",
+      "images": {
+        "featured": "https://cdn.example.com/import/1.jpg",
+        "gallery": []
+      },
+      "added_at": "2026-03-01T12:00:00.000Z",
+      "created_at": "2026-03-01T12:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 2002,
+      "product_id": 1002,
+      "name": "Import Item 2",
+      "sku": "SKU-1002",
+      "price": 16,
+      "sale_price": null,
+      "stock_status": "instock",
+      "status": "approved",
+      "images": {
+        "featured": "https://cdn.example.com/import/2.jpg",
+        "gallery": []
+      },
+      "added_at": "2026-03-02T12:00:00.000Z",
+      "created_at": "2026-03-02T12:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 2003,
+      "product_id": 1003,
+      "name": "Import Item 3",
+      "sku": "SKU-1003",
+      "price": 19,
+      "sale_price": 8,
+      "stock_status": "outofstock",
+      "status": "rejected",
+      "images": {
+        "featured": "https://cdn.example.com/import/3.jpg",
+        "gallery": []
+      },
+      "added_at": "2026-03-03T12:00:00.000Z",
+      "created_at": "2026-03-03T12:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 2004,
+      "product_id": 1004,
+      "name": "Import Item 4",
+      "sku": "SKU-1004",
+      "price": 22,
+      "sale_price": null,
+      "stock_status": "instock",
+      "status": "synced",
+      "images": {
+        "featured": "https://cdn.example.com/import/4.jpg",
+        "gallery": []
+      },
+      "added_at": "2026-03-04T12:00:00.000Z",
+      "created_at": "2026-03-04T12:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 2005,
+      "product_id": 1005,
+      "name": "Import Item 5",
+      "sku": "SKU-1005",
+      "price": 25,
+      "sale_price": 10,
+      "stock_status": "instock",
+      "status": "pending",
+      "images": {
+        "featured": "https://cdn.example.com/import/5.jpg",
+        "gallery": []
+      },
+      "added_at": "2026-03-05T12:00:00.000Z",
+      "created_at": "2026-03-05T12:00:00.000Z",
+      "updated_at": "2026-04-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "per_page": 20,
+      "total": 5,
+      "page_count": 1
+    }
+  }
+}

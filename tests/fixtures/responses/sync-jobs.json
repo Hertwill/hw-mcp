@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "product_id": 1001,
+      "name": "Product 1",
+      "status": "completed",
+      "started_at": "2026-04-01T10:00:00.000Z",
+      "completed_at": "2026-04-01T10:00:30.000Z",
+      "has_errors": false
+    },
+    {
+      "product_id": 1002,
+      "name": "Product 2",
+      "status": "running",
+      "started_at": "2026-04-10T10:00:00.000Z",
+      "completed_at": null,
+      "has_errors": false
+    },
+    {
+      "product_id": 1003,
+      "name": "Product 3",
+      "status": "failed",
+      "started_at": "2026-04-10T11:00:00.000Z",
+      "completed_at": "2026-04-10T11:00:05.000Z",
+      "has_errors": true
+    }
+  ]
+}
