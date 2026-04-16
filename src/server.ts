@@ -95,10 +95,12 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   registerResources(server, resourceDeps);
   logger.info({ resources: 5 }, "Registered Hertwill MCP resources");
 
-  // Phase 7: register discovery prompts (compose public tools only)
+  // Phase 7: register all 8 prompts UNCONDITIONALLY — prompts return
+  // instruction messages, not tool results. Auth-dependent tools are
+  // referenced in instructions; availability is checked at execution time.
   const promptDeps: PromptDeps = deps;
   registerPrompts(server, promptDeps);
-  logger.info({ prompts: 5 }, "Registered Hertwill MCP discovery prompts");
+  logger.info({ prompts: 8 }, "Registered Hertwill MCP prompts");
 
   return server;
 }

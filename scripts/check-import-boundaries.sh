@@ -48,6 +48,16 @@ if [ -d "src/resources" ]; then
   fi
 fi
 
+# PROMPT-BOUNDARY: src/prompts/ may only use "import type" from @modelcontextprotocol/sdk
+if [ -d "src/prompts" ]; then
+  SDK_VALUE_IN_PROMPTS=$(grep -rn "from.*@modelcontextprotocol/sdk" src/prompts/ --include="*.ts" 2>/dev/null | grep -v "import type" || true)
+  if [ -n "$SDK_VALUE_IN_PROMPTS" ]; then
+    echo "ERROR [PROMPT-BOUNDARY]: src/prompts/ has value imports from @modelcontextprotocol/sdk (only 'import type' permitted):"
+    echo "$SDK_VALUE_IN_PROMPTS"
+    ERRORS=$((ERRORS + 1))
+  fi
+fi
+
 if [ "$ERRORS" -gt 0 ]; then
   echo "FAILED: $ERRORS import boundary violation(s) found"
   exit 1
