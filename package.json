@@ -1,0 +1,59 @@
+{
+  "name": "@hertwill/mcp",
+  "version": "0.1.0",
+  "description": "MCP server wrapping the Hertwill dropshipping API for AI agent product sourcing",
+  "type": "module",
+  "bin": {
+    "hertwill-mcp": "./dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=20.11"
+  },
+  "files": [
+    "dist",
+    "skill",
+    "server.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "generate:types": "openapi-typescript vendor/hertwill.openapi.json -o src/hertwill/generated/api.d.ts",
+    "generate:schema": "tsx scripts/generate-product-schema.ts",
+    "prebuild": "pnpm generate:types && pnpm generate:schema",
+    "build": "tsup",
+    "lint": "biome check src/",
+    "check:tarball": "node scripts/check-tarball.mjs",
+    "check:key-reads": "bash scripts/check-key-reads.sh",
+    "check:boundaries": "bash scripts/check-import-boundaries.sh",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "validate": "pnpm build && pnpm lint && pnpm check:tarball && pnpm check:key-reads && pnpm check:boundaries && pnpm test"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29",
+    "bottleneck": "^2.19.5",
+    "openapi-fetch": "^0.17.0",
+    "p-retry": "^6.2.1",
+    "pino": "^10.3",
+    "zod": "^4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4",
+    "@types/node": "^20.17",
+    "msw": "^2.13.2",
+    "openapi-typescript": "^7.13.0",
+    "tsup": "^8.5",
+    "tsx": "^4.21",
+    "typescript": "^5.7",
+    "vitest": "^4.1"
+  }
+}

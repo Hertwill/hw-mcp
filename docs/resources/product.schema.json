@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "brand": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "slug"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "category": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "slug"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "id": {
+      "type": "number"
+    },
+    "images": {
+      "additionalProperties": false,
+      "properties": {
+        "featured": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gallery": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "featured",
+        "gallery"
+      ],
+      "type": "object"
+    },
+    "name": {
+      "type": "string"
+    },
+    "price": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "const": "EUR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object"
+    },
+    "sale_price": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "currency": {
+              "const": "EUR",
+              "type": "string"
+            }
+          },
+          "required": [
+            "amount",
+            "currency"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ships_to": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "stock": {
+      "additionalProperties": false,
+      "properties": {
+        "stock_checked_at": {
+          "type": "string"
+        },
+        "stock_level": {
+          "enum": [
+            "in_stock",
+            "low",
+            "out_of_stock"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "stock_level",
+        "stock_checked_at"
+      ],
+      "type": "object"
+    },
+    "variations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attributes": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "additionalProperties": false,
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "const": "EUR",
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "currency"
+            ],
+            "type": "object"
+          },
+          "sale_price": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "const": "EUR",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sku": {
+            "type": "string"
+          },
+          "stock": {
+            "additionalProperties": false,
+            "properties": {
+              "stock_checked_at": {
+                "type": "string"
+              },
+              "stock_level": {
+                "enum": [
+                  "in_stock",
+                  "low",
+                  "out_of_stock"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "stock_level",
+              "stock_checked_at"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sku",
+          "price",
+          "sale_price",
+          "stock",
+          "attributes"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "description",
+    "sku",
+    "price",
+    "sale_price",
+    "stock",
+    "brand",
+    "images",
+    "created_at",
+    "ships_to",
+    "category",
+    "variations"
+  ],
+  "type": "object"
+}
