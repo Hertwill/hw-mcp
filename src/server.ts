@@ -4,6 +4,7 @@ import { loadConfig } from "./config.js";
 import { HertwillClient } from "./hertwill/client.js";
 import { authLimiter, publicLimiter } from "./hertwill/rate-limiter.js";
 import { logger } from "./logger.js";
+import { registerPrompts, type PromptDeps } from "./prompts/index.js";
 import {
   createTaxonomyCache,
   registerResources,
@@ -93,6 +94,11 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   const resourceDeps: ResourceDeps = { ...deps, taxonomyCache };
   registerResources(server, resourceDeps);
   logger.info({ resources: 5 }, "Registered Hertwill MCP resources");
+
+  // Phase 7: register discovery prompts (compose public tools only)
+  const promptDeps: PromptDeps = deps;
+  registerPrompts(server, promptDeps);
+  logger.info({ prompts: 3 }, "Registered Hertwill MCP discovery prompts");
 
   return server;
 }
