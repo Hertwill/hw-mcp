@@ -98,7 +98,7 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   // Phase 7: register discovery prompts (compose public tools only)
   const promptDeps: PromptDeps = deps;
   registerPrompts(server, promptDeps);
-  logger.info({ prompts: 3 }, "Registered Hertwill MCP discovery prompts");
+  logger.info({ prompts: 5 }, "Registered Hertwill MCP discovery prompts");
 
   return server;
 }

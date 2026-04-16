@@ -1,6 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { registerCompetitorMatch } from "./competitor-match.js";
 import { registerEuWinners } from "./eu-winners.js";
 import { registerNicheResearch } from "./niche-research.js";
+import { registerSeasonalPicks } from "./seasonal-picks.js";
 import type { PromptDeps } from "./types.js";
 import { registerWinnerScan } from "./winner-scan.js";
 
@@ -17,6 +19,8 @@ export function registerPrompts(server: McpServer, deps: PromptDeps): void {
   registerWinnerScan(server, deps);
   registerNicheResearch(server, deps);
   registerEuWinners(server, deps);
+  registerSeasonalPicks(server, deps);
+  registerCompetitorMatch(server, deps);
 }
 
 export type { PromptDeps } from "./types.js";
