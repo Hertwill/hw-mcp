@@ -5,6 +5,11 @@ import { HertwillClient } from "./hertwill/client.js";
 import { authLimiter, publicLimiter } from "./hertwill/rate-limiter.js";
 import { logger } from "./logger.js";
 import {
+  createTaxonomyCache,
+  registerResources,
+  type ResourceDeps,
+} from "./resources/index.js";
+import {
   registerAuthenticatedTools,
   registerPublicTools,
   type ToolDeps,
@@ -81,6 +86,13 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
     registerAuthenticatedTools(server, deps);
     logger.info({ tools: 6 }, "Registered authenticated Hertwill tools");
   }
+
+  // D-29: register all 5 resources UNCONDITIONALLY — taxonomy endpoints are
+  // public on Hertwill's side; schema + docs resources are static.
+  const taxonomyCache = createTaxonomyCache();
+  const resourceDeps: ResourceDeps = { ...deps, taxonomyCache };
+  registerResources(server, resourceDeps);
+  logger.info({ resources: 5 }, "Registered Hertwill MCP resources");
 
   return server;
 }
