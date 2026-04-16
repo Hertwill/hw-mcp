@@ -13,10 +13,7 @@ import type { ResourceDeps } from "./types.js";
  * without an API key — taxonomy endpoints are public on Hertwill's side and
  * the schema/docs resources are static.
  */
-export function registerResources(
-  server: McpServer,
-  deps: ResourceDeps,
-): void {
+export function registerResources(server: McpServer, deps: ResourceDeps): void {
   registerCategories(server, deps);
   registerBrands(server, deps);
   registerProductSchema(server, deps);
@@ -24,5 +21,5 @@ export function registerResources(
   registerEuShipping(server, deps);
 }
 
-export type { ResourceDeps } from "./types.js";
 export { createTaxonomyCache } from "./taxonomy-cache.js";
+export type { ResourceDeps } from "./types.js";

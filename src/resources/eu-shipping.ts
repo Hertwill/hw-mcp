@@ -20,9 +20,7 @@ export function registerEuShipping(
       mimeType: "text/markdown",
     },
     async (uri) => ({
-      contents: [
-        { uri: uri.href, mimeType: "text/markdown", text: CONTENT },
-      ],
+      contents: [{ uri: uri.href, mimeType: "text/markdown", text: CONTENT }],
     }),
   );
 }

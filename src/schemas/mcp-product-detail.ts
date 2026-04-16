@@ -51,6 +51,4 @@ export const McpProductDetailSchema = z.object({
   variations: z.array(McpVariationSchema),
 });
 
-export type McpProductDetailFromSchema = z.infer<
-  typeof McpProductDetailSchema
->;
+export type McpProductDetailFromSchema = z.infer<typeof McpProductDetailSchema>;
