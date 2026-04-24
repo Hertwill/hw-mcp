@@ -1,3 +1,4 @@
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type Bottleneck from "bottleneck";
 import type { Logger } from "pino";
 import type { HertwillClient } from "../hertwill/client.js";
@@ -24,6 +25,7 @@ export interface HealthCacheEntry {
  */
 export interface ToolDeps {
   client: HertwillClient;
+  mcpServer: McpServer;
   publicLimiter: Bottleneck;
   authLimiter: Bottleneck;
   logger: Logger;

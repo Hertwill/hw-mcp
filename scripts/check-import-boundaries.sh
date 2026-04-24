@@ -19,12 +19,14 @@ if [ -n "$SDK_IN_HERTWILL" ]; then
   ERRORS=$((ERRORS + 1))
 fi
 
-# CLIENT-08b: src/tools/ must not import @modelcontextprotocol/sdk (future Phase 4+)
+# CLIENT-08b: src/tools/ may only use "import type" from @modelcontextprotocol/sdk
+# Type imports (McpServer, CallToolResult) are needed for registration and return
+# types. Value imports are forbidden to keep the tool layer transport-agnostic.
 if [ -d "src/tools" ]; then
-  SDK_IN_TOOLS=$(grep -rl "from.*@modelcontextprotocol/sdk" src/tools/ --include="*.ts" 2>/dev/null || true)
-  if [ -n "$SDK_IN_TOOLS" ]; then
-    echo "ERROR [CLIENT-08]: @modelcontextprotocol/sdk imported in src/tools/:"
-    echo "$SDK_IN_TOOLS"
+  SDK_VALUE_IN_TOOLS=$(grep -rn "from.*@modelcontextprotocol/sdk" src/tools/ --include="*.ts" 2>/dev/null | grep -v "import type" || true)
+  if [ -n "$SDK_VALUE_IN_TOOLS" ]; then
+    echo "ERROR [CLIENT-08]: src/tools/ has value imports from @modelcontextprotocol/sdk (only 'import type' permitted):"
+    echo "$SDK_VALUE_IN_TOOLS"
     ERRORS=$((ERRORS + 1))
   fi
 fi

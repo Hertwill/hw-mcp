@@ -14,7 +14,7 @@ import type { ToolDeps } from "./types.js";
  * agent should call any other authenticated tool (e.g. list_import_list)
  * which exercises the full 401 path through the error mapper.
  */
-const KEY_REGEX = /^hw_(live|test)_[A-Za-z0-9]+$/;
+const KEY_REGEX = /^hw_(live|test)_[A-Za-z0-9\-_]+$/;
 
 export function createCheckAuthHandler(deps: ToolDeps) {
   return async (): Promise<CallToolResult> => {
@@ -22,14 +22,15 @@ export function createCheckAuthHandler(deps: ToolDeps) {
     const configured = typeof key === "string" && key.length > 0;
     const match = configured ? KEY_REGEX.exec(key as string) : null;
     const formatValid = match !== null;
-    const keyType: "live" | "test" | null = match ? (match[1] as "live" | "test") : null;
+    const keyType: "live" | "test" | null = match
+      ? (match[1] as "live" | "test")
+      : null;
 
     const structured = {
       configured,
       format_valid: formatValid,
       key_type: keyType,
-      note:
-        "Key format validated locally (no network call). To confirm the key is active and permissioned, call any authenticated tool (e.g. list_import_list) which will surface a 401 if the key is revoked.",
+      note: "Key format validated locally (no network call). To confirm the key is active and permissioned, call any authenticated tool (e.g. list_import_list) which will surface a 401 if the key is revoked.",
     };
 
     const text = !configured
@@ -40,7 +41,10 @@ export function createCheckAuthHandler(deps: ToolDeps) {
 
     return {
       structuredContent: structured as unknown as Record<string, unknown>,
-      content: [{ type: "text", text }],
+      content: [
+        { type: "text", text },
+        { type: "text", text: JSON.stringify(structured, null, 2) },
+      ],
     };
   };
 }

@@ -2,13 +2,16 @@ import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { loadConfig } from "./config.js";
 import { HertwillClient } from "./hertwill/client.js";
-import { authLimiter, publicLimiter } from "./hertwill/rate-limiter.js";
+import {
+  defaultRegistry,
+  type RateLimiterRegistry,
+} from "./hertwill/rate-limiter.js";
 import { logger } from "./logger.js";
-import { registerPrompts, type PromptDeps } from "./prompts/index.js";
+import { type PromptDeps, registerPrompts } from "./prompts/index.js";
 import {
   createTaxonomyCache,
-  registerResources,
   type ResourceDeps,
+  registerResources,
 } from "./resources/index.js";
 import {
   registerAuthenticatedTools,
@@ -32,6 +35,12 @@ export interface CreateServerOverrides {
    * configured/unconfigured paths without touching `process.env`.
    */
   apiKey?: string | undefined;
+  /**
+   * Rate limiter registry for per-key bucket isolation. If omitted, the
+   * default module-level registry is used (shared singletons — correct
+   * for stdio single-user mode).
+   */
+  registry?: RateLimiterRegistry;
 }
 
 /**
@@ -51,7 +60,12 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
       ? overrides.apiKey
       : config.hertwillApiKey;
 
-  const client = new HertwillClient({ apiKey });
+  const registry = overrides?.registry ?? defaultRegistry;
+  const limiters = registry.get(apiKey);
+  const client = new HertwillClient({
+    apiKey,
+    limiter: apiKey ? limiters.auth : limiters.public,
+  });
   const server = new McpServer({
     name: "hertwill-mcp",
     version: pkg.version,
@@ -69,8 +83,9 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
 
   const deps: ToolDeps = {
     client,
-    publicLimiter,
-    authLimiter,
+    mcpServer: server,
+    publicLimiter: limiters.public,
+    authLimiter: limiters.auth,
     logger,
     serverVersion: pkg.version,
     apiKey,

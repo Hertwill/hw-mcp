@@ -1,3 +1,4 @@
+import { createMockMcpServer } from "../../helpers/mock-mcp-server.js";
 import { describe, expect, it, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import Bottleneck from "bottleneck";
@@ -34,6 +35,7 @@ function buildTestDeps(overrides: Partial<ToolDeps> = {}): ToolDeps {
     publicRateReset: new RateResetTracker(),
     authRateReset: new RateResetTracker(),
     healthCache: { get: () => undefined, set: () => {} },
+    mcpServer: createMockMcpServer(),
     ...overrides,
   };
 }

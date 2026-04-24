@@ -1,11 +1,12 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { SyncProductsInput } from "../schemas/sync-products.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import { mapHertwillError } from "../errors/map.js";
+import type { z } from "zod";
+import { confirmAction } from "../elicitation.js";
 import { HertwillApiError } from "../errors/api-error.js";
-import { requireApiKey } from "./helpers.js";
+import { mapHertwillError } from "../errors/map.js";
+import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { SyncProductsInput } from "../schemas/sync-products.js";
+import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof SyncProductsInput>;
@@ -21,12 +22,27 @@ export function createSyncProductsHandler(deps: ToolDeps) {
       return {
         isError: true,
         content: [
-          { type: "text", text: `Rate limit exceeded. Retry after ${retryAfter}s.` },
+          {
+            type: "text",
+            text: `Rate limit exceeded. Retry after ${retryAfter}s.`,
+          },
         ],
       };
     }
 
     try {
+      // Elicitation: confirm before triggering sync to store
+      const markupLabel = `${Math.round((args.default_store_markup - 1) * 100)}%`;
+      const confirmed = await confirmAction(
+        deps.mcpServer,
+        `Sync product ${args.product_id} to your store with ${markupLabel} markup?`,
+      );
+      if (!confirmed) {
+        return {
+          content: [{ type: "text", text: "Sync cancelled by user." }],
+        };
+      }
+
       const raw = await deps.client.syncProducts({
         product_id: args.product_id,
         default_store_markup: args.default_store_markup,
@@ -35,16 +51,15 @@ export function createSyncProductsHandler(deps: ToolDeps) {
       });
       const data = raw.data;
       const markupPct = Math.round((args.default_store_markup - 1) * 100);
-      const text = `Sync started for product ${args.product_id} (markup ${markupPct}%, status ${data.status}). ${data.message ?? ""}`.trim();
-      return {
-        structuredContent: {
-          product_id: data.product_id,
-          status: data.status,
-          message: data.message ?? null,
-          markup_multiplier: args.default_store_markup,
-        } as unknown as Record<string, unknown>,
-        content: [{ type: "text", text }],
+      const text =
+        `Sync started for product ${args.product_id} (markup ${markupPct}%, status ${data.status}). ${data.message ?? ""}`.trim();
+      const result = {
+        product_id: data.product_id,
+        status: data.status,
+        message: data.message ?? null,
+        markup_multiplier: args.default_store_markup,
       };
+      return toolResult(result as unknown as Record<string, unknown>, text);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (
@@ -59,10 +74,7 @@ export function createSyncProductsHandler(deps: ToolDeps) {
   };
 }
 
-export function registerSyncProducts(
-  server: McpServer,
-  deps: ToolDeps,
-): void {
+export function registerSyncProducts(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "sync_products",
     {

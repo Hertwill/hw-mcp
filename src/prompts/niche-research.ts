@@ -1,15 +1,13 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PROMPT_DESCRIPTIONS } from "./descriptions.js";
 import {
-  DiscoveryOptionalArgs,
   buildFilterNote,
   buildVatNote,
+  DiscoveryOptionalArgs,
 } from "./shared-args.js";
 import type { PromptDeps } from "./types.js";
 
-function buildInstructions(
-  args: Record<string, string | undefined>,
-): string {
+function buildInstructions(args: Record<string, string | undefined>): string {
   const filterNote = buildFilterNote(args);
   const vatNote = buildVatNote(args.vat_rate);
 

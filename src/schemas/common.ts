@@ -2,7 +2,12 @@ import { z } from "zod";
 
 /** Shared pagination input for all list/search tools */
 export const PaginationInput = z.object({
-  page: z.number().int().positive().optional().describe("Page number (1-based)"),
+  page: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe("Page number (1-based)"),
   per_page: z
     .number()
     .int()
@@ -14,8 +19,16 @@ export const PaginationInput = z.object({
 
 /** Shared price range filter for product search/list tools */
 export const PriceRangeFilter = z.object({
-  min_price: z.number().nonnegative().optional().describe("Minimum price in EUR"),
-  max_price: z.number().nonnegative().optional().describe("Maximum price in EUR"),
+  min_price: z
+    .number()
+    .nonnegative()
+    .optional()
+    .describe("Minimum price in EUR"),
+  max_price: z
+    .number()
+    .nonnegative()
+    .optional()
+    .describe("Maximum price in EUR"),
 });
 
 /** Shared product ID parameter */

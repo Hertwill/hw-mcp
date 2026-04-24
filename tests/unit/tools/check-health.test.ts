@@ -1,3 +1,4 @@
+import { createMockMcpServer } from "../../helpers/mock-mcp-server.js";
 import { describe, expect, it } from "vitest";
 import { http, HttpResponse } from "msw";
 import pino from "pino";
@@ -37,6 +38,7 @@ function buildTestDeps(overrides: Partial<ToolDeps> = {}): ToolDeps {
     publicRateReset: new RateResetTracker(),
     authRateReset: new RateResetTracker(),
     healthCache: makeHealthCache(),
+    mcpServer: createMockMcpServer(),
     ...overrides,
   };
 }

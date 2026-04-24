@@ -12,7 +12,10 @@ const ImportBatchArgs = {
 };
 
 function parseProductIds(raw: string): number[] | null {
-  const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  const parts = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const ids: number[] = [];
   for (const part of parts) {
     const n = Number.parseInt(part, 10);
@@ -52,10 +55,10 @@ function buildInstructions(ids: number[]): string {
     "## Step 3: Ask for explicit confirmation",
     "",
     "**IMPORTANT: You MUST ask the user to confirm before proceeding.**",
-    "Ask: \"Do you want to import these products? Please confirm with yes or no.\"",
+    'Ask: "Do you want to import these products? Please confirm with yes or no."',
     "",
     "- If the user says YES/confirm/proceed: continue to Step 4",
-    "- If the user says NO/cancel/stop: abort the import and report \"Import cancelled by user\"",
+    '- If the user says NO/cancel/stop: abort the import and report "Import cancelled by user"',
     "- Do NOT proceed without explicit user consent",
     "",
     "## Step 4: Import (only after confirmation)",
@@ -66,7 +69,10 @@ function buildInstructions(ids: number[]): string {
   ].join("\n");
 }
 
-export function registerImportBatch(server: McpServer, _deps: PromptDeps): void {
+export function registerImportBatch(
+  server: McpServer,
+  _deps: PromptDeps,
+): void {
   server.registerPrompt(
     "hw-import-batch",
     {

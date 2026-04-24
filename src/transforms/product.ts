@@ -144,7 +144,9 @@ export function transformProductListItem(
  * Overrides description with full (non-truncated) wrapped text and adds
  * ships_to + variations fields (only present in detail responses).
  */
-export function transformProductDetail(detail: ProductDetail): McpProductDetail {
+export function transformProductDetail(
+  detail: ProductDetail,
+): McpProductDetail {
   return {
     ...transformProductListItem(detail),
     description: wrapUntrustedContent(detail.description, detail.id),

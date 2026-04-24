@@ -15,10 +15,7 @@ export const ListProductsInput = z.object({
     .string()
     .optional()
     .describe("Filter by shipping region (e.g. 'EU')"),
-  sort_by: z
-    .enum(["price", "date", "sales"])
-    .optional()
-    .describe("Sort field"),
+  sort_by: z.enum(["price", "date", "sales"]).optional().describe("Sort field"),
   sort_order: z.enum(["asc", "desc"]).optional().describe("Sort direction"),
 });
 

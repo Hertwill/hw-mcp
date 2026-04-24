@@ -1,15 +1,13 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PROMPT_DESCRIPTIONS } from "./descriptions.js";
 import {
-  DiscoveryOptionalArgs,
   buildFilterNote,
   buildVatNote,
+  DiscoveryOptionalArgs,
 } from "./shared-args.js";
 import type { PromptDeps } from "./types.js";
 
-function buildInstructions(
-  args: Record<string, string | undefined>,
-): string {
+function buildInstructions(args: Record<string, string | undefined>): string {
   const filterNote = buildFilterNote(args);
   const vatNote = args.vat_rate
     ? buildVatNote(args.vat_rate)
@@ -20,7 +18,7 @@ function buildInstructions(
     "",
     filterNote,
     "",
-    "IMPORTANT: All searches MUST include `shipping_region: \"eu\"` to filter for EU-shippable products only.",
+    'IMPORTANT: All searches MUST include `shipping_region: "eu"` to filter for EU-shippable products only.',
     "",
     "Follow these steps:",
     "",
@@ -40,10 +38,7 @@ function buildInstructions(
   ].join("\n");
 }
 
-export function registerEuWinners(
-  server: McpServer,
-  _deps: PromptDeps,
-): void {
+export function registerEuWinners(server: McpServer, _deps: PromptDeps): void {
   server.registerPrompt(
     "hw-eu-winners",
     {

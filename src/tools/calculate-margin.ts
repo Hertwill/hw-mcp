@@ -1,8 +1,9 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { z } from "zod";
 import { CalculateMarginInput } from "../schemas/calculate-margin.js";
 import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof CalculateMarginInput>;
@@ -46,20 +47,36 @@ export function createCalculateMarginHandler(_deps: ToolDeps) {
       `VAT (informational, NOT subtracted from margin): €${vatOwed.toFixed(2)}. ` +
       `Note: VAT-inclusive model — for tax filing, use a dedicated calculator.`;
 
-    return {
-      structuredContent: {
-        cost,
-        retail_price: retail,
-        ad_spend: adSpend,
-        vat_rate: vatRate,
-        currency: "EUR",
-        gross_margin: grossMargin,
-        margin_pct: marginPct,
-        vat_owed_informational: vatOwed,
-        break_even_ad_spend: breakEven,
-      } as Record<string, unknown>,
-      content: [{ type: "text", text }],
+    const result = {
+      cost,
+      retail_price: retail,
+      ad_spend: adSpend,
+      vat_rate: vatRate,
+      currency: "EUR",
+      gross_margin: grossMargin,
+      margin_pct: marginPct,
+      vat_owed_informational: vatOwed,
+      break_even_ad_spend: breakEven,
+      _display: {
+        type: "metric",
+        primary: {
+          label: "Gross Margin",
+          value: "margin_pct",
+          format: "percent",
+        },
+        secondary: [
+          {
+            label: "Break-even Ad Spend",
+            value: "break_even_ad_spend.breakeven",
+            format: "currency_eur",
+          },
+        ],
+        ...(grossMargin < 0
+          ? { alert: { level: "warning", message: "LOSS" } }
+          : {}),
+      },
     };
+    return toolResult(result as Record<string, unknown>, text);
   };
 }
 

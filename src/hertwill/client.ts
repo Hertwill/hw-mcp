@@ -1,54 +1,50 @@
+import type Bottleneck from "bottleneck";
 import createClient from "openapi-fetch";
+import pRetry, { AbortError } from "p-retry";
+import type { z } from "zod";
+import { HertwillApiError } from "../errors/api-error.js";
 import type { paths } from "./generated/api.js";
 import {
-  publicLimiter,
   authLimiter,
+  publicLimiter,
   updateFromHeaders,
 } from "./rate-limiter.js";
 import { createRetryOptions, isRetryableStatus } from "./retry.js";
-import { HertwillApiError } from "../errors/api-error.js";
-import {
-  validateResponse,
-  type PaginationMeta,
-} from "./schemas/common.js";
-import {
-  ProductListResponseSchema,
-  ProductDetailResponseSchema,
-  ProductSearchResponseSchema,
-  CategoryListResponseSchema,
-  CategoryDetailResponseSchema,
-  BrandListResponseSchema,
-  ImportListResponseSchema,
-  AddToImportListResponseSchema,
-  SyncJobsResponseSchema,
-  SyncJobDetailResponseSchema,
-  SyncProductResponseSchema,
-  RegisterResponseSchema,
-  LoginResponseSchema,
-  RefreshResponseSchema,
-  CreateApiKeyResponseSchema,
-} from "./schemas/index.js";
+import { validateResponse } from "./schemas/common.js";
 import type {
-  ProductListResponse,
-  ProductDetailResponse,
-  ProductSearchResponse,
-  CategoryListResponse,
-  CategoryDetailResponse,
-  BrandListResponse,
-  ImportListResponse,
   AddToImportListResponse,
-  SyncJobsResponse,
-  SyncJobDetailResponse,
-  SyncProductResponse,
-  RegisterResponse,
-  LoginResponse,
-  RefreshResponse,
+  BrandListResponse,
+  CategoryDetailResponse,
+  CategoryListResponse,
   CreateApiKeyResponse,
+  ImportListResponse,
+  LoginResponse,
+  ProductDetailResponse,
+  ProductListResponse,
+  ProductSearchResponse,
+  RefreshResponse,
+  RegisterResponse,
+  SyncJobDetailResponse,
+  SyncJobsResponse,
+  SyncProductResponse,
 } from "./schemas/index.js";
-import { logger } from "../logger.js";
-import pRetry, { AbortError } from "p-retry";
-import type Bottleneck from "bottleneck";
-import type { z } from "zod";
+import {
+  AddToImportListResponseSchema,
+  BrandListResponseSchema,
+  CategoryDetailResponseSchema,
+  CategoryListResponseSchema,
+  CreateApiKeyResponseSchema,
+  ImportListResponseSchema,
+  LoginResponseSchema,
+  ProductDetailResponseSchema,
+  ProductListResponseSchema,
+  ProductSearchResponseSchema,
+  RefreshResponseSchema,
+  RegisterResponseSchema,
+  SyncJobDetailResponseSchema,
+  SyncJobsResponseSchema,
+  SyncProductResponseSchema,
+} from "./schemas/index.js";
 
 /**
  * Configuration for the HertwillClient.
@@ -58,6 +54,8 @@ export interface HertwillClientConfig {
   apiKey?: string;
   /** Base URL for the Hertwill API. Defaults to https://api.hertwill.com */
   baseUrl?: string;
+  /** Rate limiter to use. If omitted, uses the default module-level singleton. */
+  limiter?: Bottleneck;
 }
 
 /**
@@ -82,7 +80,36 @@ export class HertwillClient {
         ? { Authorization: `Bearer ${config.apiKey}` }
         : {},
     });
-    this.limiter = config.apiKey ? authLimiter : publicLimiter;
+    this.limiter =
+      config.limiter ?? (config.apiKey ? authLimiter : publicLimiter);
+
+    // SEC-05: Response size cap — reject bodies > 5 MB to prevent memory exhaustion
+    // from malicious or corrupt API responses (D-40).
+    const MAX_RESPONSE_BYTES = 5_242_880; // 5 MB
+
+    this.api.use({
+      async onResponse({ response }) {
+        const contentLength = response.headers.get("content-length");
+        if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_BYTES) {
+          throw new HertwillApiError(
+            413,
+            "RESPONSE_TOO_LARGE",
+            `Response size ${contentLength} bytes exceeds ${MAX_RESPONSE_BYTES} byte limit`,
+          );
+        }
+        // Clone to check actual body size when content-length header is absent
+        const clone = response.clone();
+        const buf = await clone.arrayBuffer();
+        if (buf.byteLength > MAX_RESPONSE_BYTES) {
+          throw new HertwillApiError(
+            413,
+            "RESPONSE_TOO_LARGE",
+            `Response body ${buf.byteLength} bytes exceeds ${MAX_RESPONSE_BYTES} byte limit`,
+          );
+        }
+        return response;
+      },
+    });
   }
 
   /**
@@ -126,31 +153,28 @@ export class HertwillClient {
     fn: () => Promise<{ data?: unknown; error?: unknown; response: Response }>,
   ): Promise<T> {
     return this.limiter.schedule(() =>
-      pRetry(
-        async () => {
-          const { data, error, response } = await fn();
-          updateFromHeaders(this.limiter, response);
+      pRetry(async () => {
+        const { data, error, response } = await fn();
+        updateFromHeaders(this.limiter, response);
 
-          if (error || !response.ok) {
-            const apiError = HertwillApiError.fromResponse(
-              response,
-              error as { error: { code: string; message: string } },
-            );
-            if (!isRetryableStatus(apiError.status)) {
-              throw new AbortError(apiError);
-            }
-            throw apiError;
+        if (error || !response.ok) {
+          const apiError = HertwillApiError.fromResponse(
+            response,
+            error as { error: { code: string; message: string } },
+          );
+          if (!isRetryableStatus(apiError.status)) {
+            throw new AbortError(apiError);
           }
+          throw apiError;
+        }
 
-          // Schema validation errors are non-retryable — abort immediately
-          try {
-            return validateResponse(schema, data, endpoint);
-          } catch (validationError) {
-            throw new AbortError(validationError as Error);
-          }
-        },
-        createRetryOptions(),
-      ),
+        // Schema validation errors are non-retryable — abort immediately
+        try {
+          return validateResponse(schema, data, endpoint);
+        } catch (validationError) {
+          throw new AbortError(validationError as Error);
+        }
+      }, createRetryOptions()),
     );
   }
 
@@ -165,30 +189,27 @@ export class HertwillClient {
     fn: () => Promise<{ data?: unknown; error?: unknown; response: Response }>,
   ): Promise<T> {
     return this.limiter.schedule(() =>
-      pRetry(
-        async () => {
-          const { data, error, response } = await fn();
-          updateFromHeaders(this.limiter, response);
+      pRetry(async () => {
+        const { data, error, response } = await fn();
+        updateFromHeaders(this.limiter, response);
 
-          if (error || !response.ok) {
-            const apiError = HertwillApiError.fromResponse(
-              response,
-              error as { error: { code: string; message: string } },
-            );
-            if (!isRetryableStatus(apiError.status)) {
-              throw new AbortError(apiError);
-            }
-            throw apiError;
+        if (error || !response.ok) {
+          const apiError = HertwillApiError.fromResponse(
+            response,
+            error as { error: { code: string; message: string } },
+          );
+          if (!isRetryableStatus(apiError.status)) {
+            throw new AbortError(apiError);
           }
+          throw apiError;
+        }
 
-          try {
-            return validateResponse(schema, data, endpoint);
-          } catch (validationError) {
-            throw new AbortError(validationError as Error);
-          }
-        },
-        createRetryOptions(),
-      ),
+        try {
+          return validateResponse(schema, data, endpoint);
+        } catch (validationError) {
+          throw new AbortError(validationError as Error);
+        }
+      }, createRetryOptions()),
     );
   }
 
@@ -249,8 +270,7 @@ export class HertwillClient {
     return this.request(
       "GET /v1/products/search",
       ProductSearchResponseSchema,
-      () =>
-        this.api.GET("/v1/products/search", { params: { query: params } }),
+      () => this.api.GET("/v1/products/search", { params: { query: params } }),
     );
   }
 
@@ -280,10 +300,8 @@ export class HertwillClient {
 
   /** 5. GET /v1/categories — List all categories. */
   async listCategories(): Promise<CategoryListResponse> {
-    return this.request(
-      "GET /v1/categories",
-      CategoryListResponseSchema,
-      () => this.api.GET("/v1/categories"),
+    return this.request("GET /v1/categories", CategoryListResponseSchema, () =>
+      this.api.GET("/v1/categories"),
     );
   }
 
@@ -327,10 +345,8 @@ export class HertwillClient {
     order?: "asc" | "desc";
   }): Promise<ImportListResponse> {
     this.requireAuth("listImportList");
-    return this.request(
-      "GET /v1/import-list",
-      ImportListResponseSchema,
-      () => this.api.GET("/v1/import-list", { params: { query: params } }),
+    return this.request("GET /v1/import-list", ImportListResponseSchema, () =>
+      this.api.GET("/v1/import-list", { params: { query: params } }),
     );
   }
 
@@ -400,10 +416,8 @@ export class HertwillClient {
     status?: "syncing" | "synced" | "sync-failed" | "not-synced";
   }): Promise<SyncJobsResponse> {
     this.requireAuth("listSyncJobs");
-    return this.request(
-      "GET /v1/sync/jobs",
-      SyncJobsResponseSchema,
-      () => this.api.GET("/v1/sync/jobs", { params: { query: params } }),
+    return this.request("GET /v1/sync/jobs", SyncJobsResponseSchema, () =>
+      this.api.GET("/v1/sync/jobs", { params: { query: params } }),
     );
   }
 
@@ -431,10 +445,8 @@ export class HertwillClient {
     first_name: string;
     last_name: string;
   }): Promise<RegisterResponse> {
-    return this.request(
-      "POST /v1/auth/register",
-      RegisterResponseSchema,
-      () => this.api.POST("/v1/auth/register", { body: params }),
+    return this.request("POST /v1/auth/register", RegisterResponseSchema, () =>
+      this.api.POST("/v1/auth/register", { body: params }),
     );
   }
 
@@ -450,13 +462,10 @@ export class HertwillClient {
 
   /** 16. POST /v1/auth/refresh — Refresh JWT token using refresh token. */
   async refreshToken(token: string): Promise<RefreshResponse> {
-    return this.request(
-      "POST /v1/auth/refresh",
-      RefreshResponseSchema,
-      () =>
-        this.api.POST("/v1/auth/refresh", {
-          body: { refresh_token: token },
-        }),
+    return this.request("POST /v1/auth/refresh", RefreshResponseSchema, () =>
+      this.api.POST("/v1/auth/refresh", {
+        body: { refresh_token: token },
+      }),
     );
   }
 
@@ -481,13 +490,10 @@ export class HertwillClient {
   async revokeApiKey(jwtToken: string, keyId: number): Promise<void> {
     await this.limiter.schedule(() =>
       pRetry(async () => {
-        const { error, response } = await this.api.DELETE(
-          "/v1/api-keys/{id}",
-          {
-            params: { path: { id: keyId } },
-            headers: { Authorization: `Bearer ${jwtToken}` },
-          },
-        );
+        const { error, response } = await this.api.DELETE("/v1/api-keys/{id}", {
+          params: { path: { id: keyId } },
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
         updateFromHeaders(this.limiter, response);
         if (error || !response.ok) {
           const apiError = HertwillApiError.fromResponse(

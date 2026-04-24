@@ -6,7 +6,7 @@ import { PaginationMetaSchema } from "./common.js";
 // layer normalizes to {name, slug} — when only a string is supplied, slug is
 // the string itself (clients may still match it for filtering).
 const BrandObjectSchema = z.object({
-  id: z.union([z.string(), z.number()]),
+  id: z.union([z.string(), z.number()]).optional(),
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
@@ -40,17 +40,17 @@ const ImagesSchema = z.object({
   gallery: z.array(z.string()),
 });
 
-// Category inline shape
+// Category inline shape — live API omits `id` on search/list endpoints.
 const CategoryInlineSchema = z.object({
-  id: z.union([z.string(), z.number()]),
+  id: z.union([z.string(), z.number()]).optional(),
   name: z.string(),
   slug: z.string(),
 });
 
-// Collection inline shape: spec says object, live API returns plain strings
-// (collection names). Accept both.
+// Collection inline shape: spec says object with id, live API returns
+// objects without id (or plain strings). Accept all variants.
 const CollectionObjectSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   name: z.string(),
   slug: z.string(),
 });

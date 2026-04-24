@@ -1,3 +1,4 @@
+import { createMockMcpServer } from "../../helpers/mock-mcp-server.js";
 import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import pino from "pino";
@@ -22,6 +23,7 @@ function buildDeps(apiKey: string | undefined): ToolDeps {
     publicRateReset: new RateResetTracker(),
     authRateReset: new RateResetTracker(),
     healthCache: { get: () => undefined, set: () => {} },
+    mcpServer: createMockMcpServer(),
   };
 }
 

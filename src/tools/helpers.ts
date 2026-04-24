@@ -74,3 +74,27 @@ export function clampPerPage(requested?: number): {
     clamped: req > MCP_LIST_PAGE_CEILING,
   };
 }
+
+/**
+ * Build a successful tool result with both structuredContent (for programmatic
+ * consumers) and a JSON text representation in content (for LLM consumption).
+ *
+ * Claude Desktop and other MCP clients surface the `content` text array to the
+ * model but may not expose `structuredContent`. Including the JSON in `content`
+ * ensures the model always sees the full data.
+ */
+export function toolResult(
+  data: Record<string, unknown>,
+  summary: string,
+): {
+  structuredContent: Record<string, unknown>;
+  content: Array<{ type: "text"; text: string }>;
+} {
+  return {
+    structuredContent: data,
+    content: [
+      { type: "text", text: summary },
+      { type: "text", text: JSON.stringify(data, null, 2) },
+    ],
+  };
+}

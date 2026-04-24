@@ -1,15 +1,15 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { ListImportListInput } from "../schemas/list-import-list.js";
+import type { z } from "zod";
+import { HertwillApiError } from "../errors/api-error.js";
+import { mapHertwillError } from "../errors/map.js";
 import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { ListImportListInput } from "../schemas/list-import-list.js";
 import {
   transformImportListItem,
   transformPagination,
 } from "../transforms/index.js";
-import { mapHertwillError } from "../errors/map.js";
-import { HertwillApiError } from "../errors/api-error.js";
-import { clampPerPage, requireApiKey } from "./helpers.js";
+import { clampPerPage, requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof ListImportListInput>;
@@ -25,7 +25,10 @@ export function createListImportListHandler(deps: ToolDeps) {
       return {
         isError: true,
         content: [
-          { type: "text", text: `Rate limit exceeded. Retry after ${retryAfter}s.` },
+          {
+            type: "text",
+            text: `Rate limit exceeded. Retry after ${retryAfter}s.`,
+          },
         ],
       };
     }
@@ -66,10 +69,7 @@ export function createListImportListHandler(deps: ToolDeps) {
           : `Listing ${items.length} import-list item(s) (page ${pagination.page}${
               pagination.has_more ? ", more available" : ""
             })${clampNote}.`;
-      return {
-        structuredContent: envelope as unknown as Record<string, unknown>,
-        content: [{ type: "text", text }],
-      };
+      return toolResult(envelope as unknown as Record<string, unknown>, text);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (
@@ -84,7 +84,10 @@ export function createListImportListHandler(deps: ToolDeps) {
   };
 }
 
-export function registerListImportList(server: McpServer, deps: ToolDeps): void {
+export function registerListImportList(
+  server: McpServer,
+  deps: ToolDeps,
+): void {
   server.registerTool(
     "list_import_list",
     {

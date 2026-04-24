@@ -27,11 +27,12 @@
     "lint": "biome check src/",
     "check:tarball": "node scripts/check-tarball.mjs",
     "check:key-reads": "bash scripts/check-key-reads.sh",
+    "check:key-leakage": "bash scripts/check-key-leakage.sh",
     "check:boundaries": "bash scripts/check-import-boundaries.sh",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
-    "validate": "pnpm build && pnpm lint && pnpm check:tarball && pnpm check:key-reads && pnpm check:boundaries && pnpm test"
+    "validate": "pnpm build && pnpm lint && pnpm check:tarball && pnpm check:key-reads && pnpm check:key-leakage && pnpm check:boundaries && pnpm audit --audit-level=high && pnpm test"
   },
   "publishConfig": {
     "access": "public",
@@ -55,5 +56,6 @@
     "tsx": "^4.21",
     "typescript": "^5.7",
     "vitest": "^4.1"
-  }
+  },
+  "packageManager": "pnpm@10.15.1"
 }

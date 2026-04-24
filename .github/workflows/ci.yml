@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Check tarball contents
+        run: pnpm check:tarball
+
+      - name: Check API key isolation
+        run: pnpm check:key-reads
+
+      - name: Check key leakage
+        run: pnpm check:key-leakage
+
+      - name: Check import boundaries
+        run: pnpm check:boundaries
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
+      - name: Run tests
+        run: pnpm test

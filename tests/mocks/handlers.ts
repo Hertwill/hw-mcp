@@ -398,7 +398,7 @@ export const handlers = [
           id: 1,
           name: "My CLI Key",
           prefix: "hw_live_a1b2c3d4",
-          key: "hw_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+          key: "hw_live_FAKEKEY1",
           store_id: 42,
           created_at: "2026-04-07T12:00:00.000Z",
         },

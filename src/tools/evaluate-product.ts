@@ -1,15 +1,16 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { EvaluateProductInput } from "../schemas/evaluate-product.js";
+import type { z } from "zod";
+import { HertwillApiError } from "../errors/api-error.js";
+import { mapHertwillError } from "../errors/map.js";
 import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { EvaluateProductInput } from "../schemas/evaluate-product.js";
 import {
   transformShipsTo,
   transformStockInfo,
   wrapUntrustedContent,
 } from "../transforms/index.js";
-import { mapHertwillError } from "../errors/map.js";
-import { HertwillApiError } from "../errors/api-error.js";
+import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof EvaluateProductInput>;
@@ -77,10 +78,32 @@ export function createEvaluateProductHandler(deps: ToolDeps) {
         has_variants: variations.length > 0,
       };
       const text = `Scorecard for product ${d.id}: stock ${scorecard.stock_state}, ${scorecard.variant_count} variation(s), ships to ${regions.length} region(s)${scorecard.eu_shippable ? " (incl. EU)" : ""}${scorecard.is_on_sale ? ", on sale" : ""}.`;
-      return {
-        structuredContent: scorecard as unknown as Record<string, unknown>,
-        content: [{ type: "text", text }],
+      const result = {
+        ...scorecard,
+        _display: {
+          type: "table",
+          title: "Product Viability Scorecard",
+          sections: [
+            {
+              label: "Margin",
+              fields: [
+                "margin_inputs.cost",
+                "margin_inputs.msrp",
+                "margin_inputs.currency",
+              ],
+            },
+            {
+              label: "Logistics",
+              fields: ["shipping_regions", "eu_shippable"],
+            },
+            {
+              label: "Inventory",
+              fields: ["stock_state", "variant_count", "has_variants"],
+            },
+          ],
+        },
       };
+      return toolResult(result as unknown as Record<string, unknown>, text);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

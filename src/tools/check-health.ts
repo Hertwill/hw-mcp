@@ -2,7 +2,8 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { CheckHealthInput } from "../schemas/check-health.js";
 import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import type { ToolDeps, HealthCacheEntry } from "./types.js";
+import { toolResult } from "./helpers.js";
+import type { HealthCacheEntry, ToolDeps } from "./types.js";
 
 const HEALTH_CACHE_TTL_MS = 5_000;
 
@@ -86,13 +87,13 @@ export function createCheckHealthHandler(deps: ToolDeps) {
     const reachText = probe.ok
       ? `Hertwill API reachable (${probe.latency_ms}ms)`
       : "Hertwill API unreachable";
-    const authText = deps.apiKey !== undefined ? "auth bucket configured" : "no API key (public-only)";
+    const authText =
+      deps.apiKey !== undefined
+        ? "auth bucket configured"
+        : "no API key (public-only)";
     const text = `${reachText}. Server v${deps.serverVersion}. Public bucket: ${publicRemaining ?? "?"}/${PUBLIC_LIMIT}. ${authText}.`;
 
-    return {
-      structuredContent: structured as unknown as Record<string, unknown>,
-      content: [{ type: "text", text }],
-    };
+    return toolResult(structured as unknown as Record<string, unknown>, text);
   };
 }
 

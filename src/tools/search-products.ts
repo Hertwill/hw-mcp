@@ -1,15 +1,15 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { SearchProductsInput } from "../schemas/search-products.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import {
-  transformProductListItem,
-  transformPagination,
-} from "../transforms/index.js";
-import { mapHertwillError } from "../errors/map.js";
+import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
-import { clampPerPage } from "./helpers.js";
+import { mapHertwillError } from "../errors/map.js";
+import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { SearchProductsInput } from "../schemas/search-products.js";
+import {
+  transformPagination,
+  transformProductListItem,
+} from "../transforms/index.js";
+import { clampPerPage, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof SearchProductsInput>;
@@ -69,10 +69,7 @@ export function createSearchProductsHandler(deps: ToolDeps) {
           : `Found ${items.length} product(s) matching "${args.query}" (page ${pagination.page}${
               pagination.has_more ? ", more available" : ""
             })${clampNote}.`;
-      return {
-        structuredContent: envelope as unknown as Record<string, unknown>,
-        content: [{ type: "text", text: countText }],
-      };
+      return toolResult(envelope as unknown as Record<string, unknown>, countText);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

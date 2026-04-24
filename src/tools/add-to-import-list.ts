@@ -1,11 +1,12 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { z } from "zod";
+import { confirmAction } from "../elicitation.js";
+import { HertwillApiError } from "../errors/api-error.js";
+import { mapHertwillError } from "../errors/map.js";
 import { AddToImportListInput } from "../schemas/add-to-import-list.js";
 import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import { mapHertwillError } from "../errors/map.js";
-import { HertwillApiError } from "../errors/api-error.js";
-import { requireApiKey } from "./helpers.js";
+import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof AddToImportListInput>;
@@ -21,25 +22,37 @@ export function createAddToImportListHandler(deps: ToolDeps) {
       return {
         isError: true,
         content: [
-          { type: "text", text: `Rate limit exceeded. Retry after ${retryAfter}s.` },
+          {
+            type: "text",
+            text: `Rate limit exceeded. Retry after ${retryAfter}s.`,
+          },
         ],
       };
     }
 
     try {
+      // Elicitation: confirm before mutating the import list
+      const confirmed = await confirmAction(
+        deps.mcpServer,
+        `Add ${args.product_ids.length} product(s) to your import list? IDs: ${args.product_ids.join(", ")}`,
+      );
+      if (!confirmed) {
+        return {
+          content: [{ type: "text", text: "Import cancelled by user." }],
+        };
+      }
+
       // D-20: NO pre-add stock probe. Directly call addToImportList and
       // surface Hertwill's native POST response.
       const raw = await deps.client.addToImportList(args.product_ids);
       const results = raw.data ?? [];
       const text = `Added ${results.length} of ${args.product_ids.length} product(s) to import list.`;
-      return {
-        structuredContent: {
-          results,
-          requested_count: args.product_ids.length,
-          added_count: results.length,
-        } as unknown as Record<string, unknown>,
-        content: [{ type: "text", text }],
+      const result = {
+        results,
+        requested_count: args.product_ids.length,
+        added_count: results.length,
       };
+      return toolResult(result as unknown as Record<string, unknown>, text);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

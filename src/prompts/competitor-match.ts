@@ -2,24 +2,20 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { PROMPT_DESCRIPTIONS } from "./descriptions.js";
 import {
-  DiscoveryOptionalArgs,
   buildFilterNote,
   buildVatNote,
+  DiscoveryOptionalArgs,
 } from "./shared-args.js";
 import type { PromptDeps } from "./types.js";
 
 const CompetitorMatchArgs = {
   input: z
     .string()
-    .describe(
-      "Competitor product URL, title, or description to match against",
-    ),
+    .describe("Competitor product URL, title, or description to match against"),
   ...DiscoveryOptionalArgs,
 };
 
-function buildInstructions(
-  args: Record<string, string | undefined>,
-): string {
+function buildInstructions(args: Record<string, string | undefined>): string {
   const input = args.input ?? "";
   const filterNote = buildFilterNote(args);
   const vatNote = buildVatNote(args.vat_rate);

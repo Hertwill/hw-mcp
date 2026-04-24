@@ -1,0 +1,56 @@
+{
+  "name": "@hertwill/mcp",
+  "display_name": "Hertwill MCP",
+  "description": "MCP server for the Hertwill dropshipping API — search products, evaluate margins, manage import lists, and sync to Shopify/WooCommerce through natural language from any AI agent.",
+  "short_description": "AI-powered Hertwill product sourcing for dropshippers",
+  "author": {
+    "name": "Hertwill",
+    "url": "https://hertwill.com",
+    "email": "roland@hertwill.com"
+  },
+  "repository": "https://github.com/Hertwill/hw-mcp",
+  "npm_package": "@hertwill/mcp",
+  "homepage": "https://hertwill.com",
+  "license": "MIT",
+  "tags": [
+    "dropshipping",
+    "ecommerce",
+    "product-sourcing",
+    "hertwill",
+    "shopify",
+    "woocommerce",
+    "mcp",
+    "ai-agent",
+    "claude",
+    "supply-chain"
+  ],
+  "categories": [
+    "ecommerce",
+    "business",
+    "productivity"
+  ],
+  "transport": ["stdio", "http"],
+  "capabilities": {
+    "tools": 12,
+    "prompts": 8,
+    "resources": 5
+  },
+  "install": "npx @hertwill/mcp",
+  "requirements": {
+    "node": ">=20.11",
+    "api_key": {
+      "env_var": "HERTWILL_API_KEY",
+      "required": false,
+      "description": "Optional. Enables import list and sync tools. Get one at https://hertwill.com"
+    }
+  },
+  "clients": [
+    "Claude Desktop",
+    "Claude Code",
+    "Cursor",
+    "Cline",
+    "Continue",
+    "Windsurf",
+    "VS Code + Copilot"
+  ]
+}

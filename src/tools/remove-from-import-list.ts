@@ -1,10 +1,11 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { RemoveFromImportListInput } from "../schemas/remove-from-import-list.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import type { z } from "zod";
+import { confirmAction } from "../elicitation.js";
 import { HertwillApiError } from "../errors/api-error.js";
-import { requireApiKey } from "./helpers.js";
+import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { RemoveFromImportListInput } from "../schemas/remove-from-import-list.js";
+import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof RemoveFromImportListInput>;
@@ -40,6 +41,17 @@ export function createRemoveFromImportListHandler(deps: ToolDeps) {
       };
     }
 
+    // Elicitation: confirm before removing from import list
+    const confirmed = await confirmAction(
+      deps.mcpServer,
+      `Remove ${args.product_ids.length} product(s) from your import list? IDs: ${args.product_ids.join(", ")}`,
+    );
+    if (!confirmed) {
+      return {
+        content: [{ type: "text", text: "Removal cancelled by user." }],
+      };
+    }
+
     // D-19 sequential fan-out with best-effort per-item status.
     const results: RemoveResult[] = [];
     for (const id of args.product_ids) {
@@ -68,14 +80,12 @@ export function createRemoveFromImportListHandler(deps: ToolDeps) {
         ? `Removed ${succeeded} of ${results.length} product(s) from import list.`
         : `Removed ${succeeded} of ${results.length}; ${failed} failed. Agent may retry failed IDs.`;
 
-    return {
-      structuredContent: {
-        results,
-        succeeded_count: succeeded,
-        failed_count: failed,
-      } as unknown as Record<string, unknown>,
-      content: [{ type: "text", text }],
+    const result = {
+      results,
+      succeeded_count: succeeded,
+      failed_count: failed,
     };
+    return toolResult(result as unknown as Record<string, unknown>, text);
   };
 }
 

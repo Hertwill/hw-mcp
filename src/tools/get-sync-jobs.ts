@@ -1,12 +1,12 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { GetSyncJobsInput } from "../schemas/get-sync-jobs.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import { transformSyncJob, transformPagination } from "../transforms/index.js";
-import { mapHertwillError } from "../errors/map.js";
+import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
-import { clampPerPage, requireApiKey } from "./helpers.js";
+import { mapHertwillError } from "../errors/map.js";
+import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { GetSyncJobsInput } from "../schemas/get-sync-jobs.js";
+import { transformPagination, transformSyncJob } from "../transforms/index.js";
+import { clampPerPage, requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof GetSyncJobsInput>;
@@ -22,7 +22,10 @@ export function createGetSyncJobsHandler(deps: ToolDeps) {
       return {
         isError: true,
         content: [
-          { type: "text", text: `Rate limit exceeded. Retry after ${retryAfter}s.` },
+          {
+            type: "text",
+            text: `Rate limit exceeded. Retry after ${retryAfter}s.`,
+          },
         ],
       };
     }
@@ -61,13 +64,8 @@ export function createGetSyncJobsHandler(deps: ToolDeps) {
               errorCount > 0 ? `, ${errorCount} with errors` : ""
             }${pagination.has_more ? ", more available" : ""}${clampNote}.`;
 
-      return {
-        structuredContent: { items, pagination, hints } as unknown as Record<
-          string,
-          unknown
-        >,
-        content: [{ type: "text", text }],
-      };
+      const envelope = { items, pagination, hints };
+      return toolResult(envelope as unknown as Record<string, unknown>, text);
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

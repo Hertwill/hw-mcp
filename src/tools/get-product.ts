@@ -1,11 +1,13 @@
-import type { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { GetProductInput } from "../schemas/get-product.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
-import { transformProductDetail } from "../transforms/index.js";
-import { mapHertwillError } from "../errors/map.js";
+import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
+import { mapHertwillError } from "../errors/map.js";
+import { logger } from "../logger.js";
+import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { GetProductInput } from "../schemas/get-product.js";
+import { transformProductDetail } from "../transforms/index.js";
+import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
 type Args = z.infer<typeof GetProductInput>;
@@ -36,10 +38,30 @@ export function createGetProductHandler(deps: ToolDeps) {
           : `${variationCount} variation${variationCount === 1 ? "" : "s"}`;
       const priceText = `€${detail.price.amount.toFixed(2)}`;
       const text = `Product ${detail.id}: "${raw.data.name}" — ${priceText}, stock ${detail.stock.stock_level}, ${variationText}.`;
-      return {
-        structuredContent: detail as unknown as Record<string, unknown>,
-        content: [{ type: "text", text }],
-      };
+      const result = toolResult(detail as unknown as Record<string, unknown>, text);
+
+      // Fetch featured image so the LLM can visually assess the product
+      // (ad appeal, quality, category fit). User sees a "Show Image" button.
+      const featuredUrl = detail.images.featured;
+      if (featuredUrl) {
+        try {
+          const res = await fetch(featuredUrl, { signal: AbortSignal.timeout(5000) });
+          if (res.ok) {
+            const mimeType = res.headers.get("content-type") ?? "image/jpeg";
+            const buf = await res.arrayBuffer();
+            const data = Buffer.from(buf).toString("base64");
+            result.content.push({
+              type: "image",
+              data,
+              mimeType,
+            } as unknown as { type: "text"; text: string });
+          }
+        } catch {
+          logger.debug({ url: featuredUrl }, "Image fetch failed, skipping");
+        }
+      }
+
+      return result;
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

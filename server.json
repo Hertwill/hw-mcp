@@ -1,0 +1,32 @@
+{
+  "name": "@hertwill/mcp",
+  "display_name": "Hertwill MCP",
+  "version": "0.1.0",
+  "description": "MCP server for the Hertwill dropshipping API — search products, evaluate margins, manage import lists, and sync to Shopify/WooCommerce through natural language.",
+  "repository": "https://github.com/Hertwill/hw-mcp",
+  "homepage": "https://hertwill.com",
+  "license": "MIT",
+  "author": {
+    "name": "Hertwill",
+    "url": "https://hertwill.com"
+  },
+  "transport": {
+    "stdio": {
+      "command": "npx",
+      "args": ["@hertwill/mcp"]
+    }
+  },
+  "capabilities": {
+    "tools": true,
+    "prompts": true,
+    "resources": true
+  },
+  "env": {
+    "HERTWILL_API_KEY": {
+      "description": "Hertwill API key (hw_live_...). Optional — enables import list and sync tools.",
+      "required": false
+    }
+  },
+  "categories": ["ecommerce", "business"],
+  "tags": ["dropshipping", "hertwill", "shopify", "woocommerce", "product-sourcing"]
+}
