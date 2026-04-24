@@ -79,7 +79,7 @@ describe("SEC-06: Telemetry — opt-in behaviour", () => {
   it("Test 6 — PII-free: no API key material in serialised spans", () => {
     process.env.HERTWILL_MCP_TELEMETRY = "true";
     const tel = initTelemetry();
-    tel.recordSpan("check_auth", 50, "error", "UNAUTHORIZED");
+    tel.recordSpan("check_health", 50, "error", "UNAUTHORIZED");
     const serialised = JSON.stringify(tel.spans());
     // No API key prefix patterns
     expect(serialised).not.toMatch(/hw_live_/);

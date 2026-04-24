@@ -1,6 +1,6 @@
 # Hertwill MCP Tool Catalog
 
-This file is the single source of truth for all 12 Hertwill MCP tool descriptions (per D-03).
+This file is the single source of truth for all 11 Hertwill MCP tool descriptions (per D-03).
 Every tool below follows the mandatory template: PURPOSE / WHEN TO USE / DO NOT USE WHEN / PREFER OVER / AUTH / RETURNS / EXAMPLE INTENT.
 
 A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the registered descriptions in `src/schemas/descriptions.ts` stay in sync with this document and that every tool includes a `DO NOT USE WHEN` clause routing to at least one sibling tool.
@@ -107,9 +107,9 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 **WHEN TO USE:** Diagnosing connectivity, verifying rate-limit headroom, or confirming the server is up before batch operations.
 
 **DO NOT USE WHEN:**
-- The user wants to check whether their API key is valid -> use `check_auth`
+- The user wants to browse/search products -> use `search_products` or `list_products`
 
-**PREFER OVER:** `check_auth` when the question is infrastructure health rather than credential validity.
+**PREFER OVER:** Running product queries when the question is infrastructure health rather than product discovery.
 
 **AUTH:** None required.
 
@@ -210,19 +210,3 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 
 **EXAMPLE INTENT:** "Show me the status of my last 20 Shopify syncs."
 
-## check_auth
-
-**PURPOSE:** Validate the configured `HERTWILL_API_KEY` and return store scope without ever leaking the key itself.
-
-**WHEN TO USE:** The user wants to verify credentials are working and see which store/scope the key is bound to.
-
-**DO NOT USE WHEN:**
-- The user wants infrastructure/rate-limit health -> use `check_health`
-
-**PREFER OVER:** `check_health` when the concern is credential validity rather than server reachability.
-
-**AUTH:** Requires `HERTWILL_API_KEY`.
-
-**RETURNS:** `{authenticated: boolean, store_id, scopes: string[], key_fingerprint}` — the raw key is never echoed; `key_fingerprint` is a short non-reversible identifier.
-
-**EXAMPLE INTENT:** "Confirm my Hertwill API key is valid and show me which store it's scoped to."

@@ -43,11 +43,12 @@ export async function confirmAction(
 
     return result.data?.confirmed === true;
   } catch {
-    // Client doesn't support elicitation — proceed without confirmation
-    // (matches pre-elicitation behavior where tools executed immediately)
-    logger.debug(
-      "Elicitation not supported by client, proceeding without confirmation",
+    // Client doesn't support elicitation — deny by default.
+    // Destructive actions require explicit user confirmation; silently
+    // proceeding would violate the safety contract.
+    logger.warn(
+      "Elicitation not supported by client, denying destructive action",
     );
-    return true;
+    return false;
   }
 }

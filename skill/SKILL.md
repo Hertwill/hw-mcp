@@ -132,7 +132,6 @@ Use the right tool for each step of the sourcing workflow.
 ### Diagnostics
 
 - `check_health` -- Verify server status, Hertwill API reachability, and rate-limit headroom. Use before batch operations.
-- `check_auth` -- Validate the configured API key and see which store it is scoped to. Use when authenticated operations fail.
 
 ---
 

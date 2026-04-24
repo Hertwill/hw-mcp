@@ -69,7 +69,10 @@ export function createSearchProductsHandler(deps: ToolDeps) {
           : `Found ${items.length} product(s) matching "${args.query}" (page ${pagination.page}${
               pagination.has_more ? ", more available" : ""
             })${clampNote}.`;
-      return toolResult(envelope as unknown as Record<string, unknown>, countText);
+      return toolResult(
+        envelope as unknown as Record<string, unknown>,
+        countText,
+      );
     } catch (err) {
       const mapped = mapHertwillError(err);
       if (

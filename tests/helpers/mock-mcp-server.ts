@@ -3,16 +3,14 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 /**
  * Minimal McpServer stub for tool handler tests.
  *
- * The `server.elicitInput()` call throws (simulating a client that doesn't
- * support elicitation), so `confirmAction()` gracefully falls back to
- * "proceed without confirmation" — matching pre-elicitation behavior.
+ * Simulates a client that supports elicitation and auto-confirms.
+ * This lets destructive tool tests (add/remove/sync) proceed as expected.
  */
 export function createMockMcpServer(): McpServer {
   return {
     server: {
-      elicitInput: () => {
-        throw new Error("Elicitation not supported");
-      },
+      elicitInput: () =>
+        Promise.resolve({ status: "completed", data: { confirmed: true } }),
     },
   } as unknown as McpServer;
 }

@@ -11,7 +11,6 @@ import {
   RemoveFromImportListInput,
   SyncProductsInput,
   GetSyncJobsInput,
-  CheckAuthInput,
   PaginationInput,
   PriceRangeFilter,
   ProductIdParam,
@@ -177,12 +176,6 @@ describe("CalculateMarginInput", () => {
 describe("CheckHealthInput", () => {
   it("accepts empty object", () => {
     expect(CheckHealthInput.safeParse({}).success).toBe(true);
-  });
-});
-
-describe("CheckAuthInput", () => {
-  it("accepts empty object", () => {
-    expect(CheckAuthInput.safeParse({}).success).toBe(true);
   });
 });
 

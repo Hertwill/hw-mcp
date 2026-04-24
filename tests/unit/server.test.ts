@@ -22,7 +22,6 @@ const EXPECTED_TOOLS_WITH_AUTH = [
   "remove_from_import_list",
   "sync_products",
   "get_sync_jobs",
-  "check_auth",
 ].sort();
 
 async function listToolsViaInMemory(apiKey: string | undefined) {
@@ -128,11 +127,11 @@ describe("createServer", () => {
     }
   });
 
-  it("with API key: registers 12 tools total (D-24)", async () => {
+  it("with API key: registers 11 tools total (D-24)", async () => {
     const tools = await listToolsViaInMemory("hw_test_VALIDFORMAT123");
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual(EXPECTED_TOOLS_WITH_AUTH);
-    expect(names.length).toBe(12);
+    expect(names.length).toBe(11);
   });
 
   it("without API key: authenticated tools are NOT registered", async () => {
@@ -143,29 +142,6 @@ describe("createServer", () => {
     expect(names).not.toContain("remove_from_import_list");
     expect(names).not.toContain("sync_products");
     expect(names).not.toContain("get_sync_jobs");
-    expect(names).not.toContain("check_auth");
-  });
-
-  it("check_auth returns format_valid: true for well-formed test key", async () => {
-    const server = createServer({ apiKey: "hw_test_VALIDFORMAT123" });
-    const [c, s] = InMemoryTransport.createLinkedPair();
-    await server.connect(s);
-    const client = new Client({ name: "t", version: "0" });
-    await client.connect(c);
-    const result = await client.callTool({
-      name: "check_auth",
-      arguments: {},
-    });
-    const sc = result.structuredContent as {
-      configured: boolean;
-      format_valid: boolean;
-      key_type: string;
-    };
-    expect(sc.configured).toBe(true);
-    expect(sc.format_valid).toBe(true);
-    expect(sc.key_type).toBe("test");
-    await client.close();
-    await server.close();
   });
 
   it("no auth tool description leaks a key-shaped substring", async () => {

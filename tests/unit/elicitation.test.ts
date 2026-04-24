@@ -36,8 +36,8 @@ describe("confirmAction — elicitation helper", () => {
     expect(await confirmAction(server, "Do it?")).toBe(false);
   });
 
-  it("returns true (graceful degradation) when client does not support elicitation", async () => {
+  it("returns false (deny by default) when client does not support elicitation", async () => {
     const server = mockMcpServer("throw");
-    expect(await confirmAction(server, "Do it?")).toBe(true);
+    expect(await confirmAction(server, "Do it?")).toBe(false);
   });
 });

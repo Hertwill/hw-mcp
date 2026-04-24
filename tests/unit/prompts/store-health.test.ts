@@ -64,7 +64,6 @@ describe("hw-store-health prompt (PROMPT-08)", () => {
       text: string;
     };
     expect(content.type).toBe("text");
-    expect(content.text).toContain("check_auth");
     expect(content.text).toContain("check_health");
     expect(content.text).toContain("list_import_list");
     expect(content.text).toContain("get_sync_jobs");

@@ -108,13 +108,15 @@ describe("SEC-01: Red-team injection containment — list transform", () => {
         `${payload.attack_type}: description must end with close delimiter`,
       ).toBe(true);
 
-      // Total description length is bounded by the wrapper + truncated content
-      // Max: open_delimiter(len) + MAX_LIST_DESCRIPTION_LENGTH + "..."(3) + close_delimiter(len)
+      // Total description length is bounded by the wrapper + truncated content.
+      // Entity encoding of delimiter escapes (</untrusted_supplier_content> -> &lt;/...&gt;)
+      // can add up to ~10 chars per occurrence, so we allow a generous margin.
       const maxExpectedLength =
         (OPEN_DELIMITER + "1002" + '">').length +
         MAX_LIST_DESCRIPTION_LENGTH +
         "...".length +
-        CLOSE_DELIMITER.length;
+        CLOSE_DELIMITER.length +
+        50; // headroom for entity encoding expansion
       expect(
         result.description.length,
         `${payload.attack_type}: description too long`,
@@ -186,11 +188,17 @@ describe("SEC-01: Red-team injection containment — detail transform", () => {
         result.description,
         `${payload.attack_type}: detail description missing close delimiter`,
       ).toContain(CLOSE_DELIMITER);
-      // Full payload text preserved (no "..." truncation in detail)
+      // Full payload text preserved (no "..." truncation in detail).
+      // The closing delimiter is entity-encoded, so check the escaped version
+      // for payloads that contain it; all others appear verbatim.
+      const escaped = payload.description.replaceAll(
+        "</untrusted_supplier_content>",
+        "&lt;/untrusted_supplier_content&gt;",
+      );
       expect(
         result.description,
         `${payload.attack_type}: detail description should contain full payload`,
-      ).toContain(payload.description);
+      ).toContain(escaped);
     }
   });
 
@@ -201,13 +209,20 @@ describe("SEC-01: Red-team injection containment — detail transform", () => {
     const item = makeDetailItem(2002, xmlPayload!.name, xmlPayload!.description);
     const result = transformProductDetail(item);
 
-    // Same limitation as in list: the payload's embedded delimiter strings appear in
-    // the middle of the output. The invariant is that the outer wrapper is correct:
-    // the string starts with the open delimiter and ends with the close delimiter.
+    // The closing delimiter in the payload is now entity-encoded, so only ONE
+    // real close delimiter exists (the outer wrapper). This is the fix for the
+    // original SEC-01 injection vulnerability.
     expect(result.description.indexOf(OPEN_DELIMITER), "detail description must start with open delimiter").toBe(0);
     expect(result.description.endsWith(CLOSE_DELIMITER), "detail description must end with close delimiter").toBe(true);
-    // Full payload is preserved inside the detail wrapper (no truncation)
-    expect(result.description).toContain(xmlPayload!.description);
+    // The escaped payload is preserved inside the wrapper
+    const escaped = xmlPayload!.description.replaceAll(
+      "</untrusted_supplier_content>",
+      "&lt;/untrusted_supplier_content&gt;",
+    );
+    expect(result.description).toContain(escaped);
+    // Now there should be exactly ONE real close delimiter (the outer wrapper)
+    const realCloseCount = (result.description.match(new RegExp(CLOSE_DELIMITER, "g")) ?? []).length;
+    expect(realCloseCount, "exactly one real close delimiter after escaping").toBe(1);
   });
 
   it("System prompt mimicry in name: name is wrapped, not executed as instructions", () => {

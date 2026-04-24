@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerAddToImportList } from "./add-to-import-list.js";
 import { registerCalculateMargin } from "./calculate-margin.js";
-import { registerCheckAuth } from "./check-auth.js";
+
 import { registerCheckHealth } from "./check-health.js";
 import { registerEvaluateProduct } from "./evaluate-product.js";
 import { registerGetProduct } from "./get-product.js";
@@ -44,7 +44,6 @@ export function registerAuthenticatedTools(
   registerRemoveFromImportList(server, deps);
   registerSyncProducts(server, deps);
   registerGetSyncJobs(server, deps);
-  registerCheckAuth(server, deps);
 }
 
 export type { ToolDeps } from "./types.js";

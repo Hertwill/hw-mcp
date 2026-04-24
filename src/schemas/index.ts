@@ -8,7 +8,7 @@ export {
   CalculateMarginInput,
   type CalculateMarginParams,
 } from "./calculate-margin.js";
-export { CheckAuthInput, type CheckAuthParams } from "./check-auth.js";
+
 export { CheckHealthInput, type CheckHealthParams } from "./check-health.js";
 export {
   PaginationInput,

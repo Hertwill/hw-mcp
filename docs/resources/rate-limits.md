@@ -5,7 +5,7 @@
 - **Public (unauthenticated) bucket**: 60 requests per minute, enforced client-side via a Bottleneck token bucket.
 - **Authenticated bucket** (when `HERTWILL_API_KEY` is set): 300 requests per minute, also enforced via Bottleneck.
 
-The two buckets are independent. Public endpoints (search, list, get, categories, brands) drain the public bucket; endpoints that require a key (import list, sync, check_auth) drain the authenticated bucket.
+The two buckets are independent. Public endpoints (search, list, get, categories, brands) drain the public bucket; endpoints that require a key (import list, sync) drain the authenticated bucket.
 
 ## Retry-After contract
 

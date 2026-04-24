@@ -156,7 +156,6 @@ describe("Phase 7: prompt registration (PROMPT-01..08)", () => {
     const text = result.messages[0].content.type === "text"
       ? result.messages[0].content.text
       : "";
-    expect(text).toContain("check_auth");
     expect(text).toContain("check_health");
     expect(text).toContain("list_import_list");
     expect(text).toContain("get_sync_jobs");

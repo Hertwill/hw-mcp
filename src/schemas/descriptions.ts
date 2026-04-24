@@ -23,7 +23,6 @@ export const TOOL_NAMES = [
   "remove_from_import_list",
   "sync_products",
   "get_sync_jobs",
-  "check_auth",
 ] as const;
 
 export type ToolName = (typeof TOOL_NAMES)[number];
@@ -39,7 +38,7 @@ export const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
 
   calculate_margin: `Pure math utility: given cost, retail, ad spend, and VAT rate, return margin amount, margin %, and break-even ad-spend band. Makes zero API calls. Do NOT use when the user wants a real product evaluation (use evaluate_product) or to find products (use search_products). No auth required.`,
 
-  check_health: `Report server version, Hertwill API reachability, and remaining rate-limit budget for both the public (60/min) and authenticated (300/min) buckets. Use for connectivity and capacity diagnostics. Do NOT use to validate an API key (use check_auth). No auth required.`,
+  check_health: `Report server version, Hertwill API reachability, and remaining rate-limit budget for both the public (60/min) and authenticated (300/min) buckets. Use for connectivity and capacity diagnostics. Do NOT use to search products (use search_products). No auth required.`,
 
   list_import_list: `Return the authenticated store's current Hertwill import list, paginated. Use to audit what's staged for sync. Do NOT use to search the catalog (use search_products), stage new products (use add_to_import_list), or check sync status (use get_sync_jobs). Returns a paginated envelope; ships_to is not in list items — use get_product for shipping. Requires HERTWILL_API_KEY.`,
 
@@ -50,6 +49,4 @@ export const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   sync_products: `Trigger a Shopify or WooCommerce sync for one product already staged in the import list, with a specified markup. Use to push a single staged product to the connected store. Do NOT use to check sync progress (use get_sync_jobs); if the product isn't yet staged, call add_to_import_list first. Returns {sync_job_id, product_id, status: "queued", markup_applied}. Requires HERTWILL_API_KEY.`,
 
   get_sync_jobs: `Return paginated sync job status for the authenticated store. Use to poll or review previously triggered syncs. Do NOT use to trigger a new sync (use sync_products) or to inspect the import list (use list_import_list). Returns a paginated envelope of {sync_job_id, product_id, status, created_at, finished_at, error}. Requires HERTWILL_API_KEY.`,
-
-  check_auth: `Validate the configured HERTWILL_API_KEY and return store scope without leaking the key. Returns {authenticated, store_id, scopes, key_fingerprint} — the raw key is never echoed. Do NOT use to check server or rate-limit health (use check_health). Requires HERTWILL_API_KEY.`,
 };

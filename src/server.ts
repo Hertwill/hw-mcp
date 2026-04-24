@@ -100,7 +100,7 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   // D-24: register authenticated tools only when an API key is configured.
   if (typeof apiKey === "string" && apiKey.length > 0) {
     registerAuthenticatedTools(server, deps);
-    logger.info({ tools: 6 }, "Registered authenticated Hertwill tools");
+    logger.info({ tools: 5 }, "Registered authenticated Hertwill tools");
   }
 
   // D-29: register all 5 resources UNCONDITIONALLY — taxonomy endpoints are

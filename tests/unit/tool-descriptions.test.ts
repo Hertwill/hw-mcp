@@ -21,7 +21,7 @@ describe("Tool descriptions (golden-file snapshots)", () => {
 
 describe("TOOL_DESCRIPTIONS completeness", () => {
   it("has exactly 12 entries", () => {
-    expect(Object.keys(TOOL_DESCRIPTIONS)).toHaveLength(12);
+    expect(Object.keys(TOOL_DESCRIPTIONS)).toHaveLength(11);
   });
 
   it("matches TOOL_NAMES (no orphans, no missing)", () => {
@@ -68,7 +68,7 @@ describe("docs/TOOLS.md sync (D-04)", () => {
       ).toHaveProperty(heading);
     }
     // Also make sure the file contains exactly 12 tool headings.
-    expect(toolHeadings).toHaveLength(12);
+    expect(toolHeadings).toHaveLength(11);
   });
 
   it("every tool section contains DO NOT USE WHEN", () => {

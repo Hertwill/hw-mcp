@@ -59,9 +59,19 @@ export function transformStockInfo(
   };
 }
 
-/** CONTRACT-07: Wrap supplier-authored text in untrusted content delimiters. */
+/**
+ * CONTRACT-07: Wrap supplier-authored text in untrusted content delimiters.
+ *
+ * Escapes any occurrences of the closing tag in the payload to prevent
+ * delimiter injection (SEC-01 hardening). The escape uses HTML entity
+ * encoding for the `<` and `/` characters in `</untrusted_supplier_content>`.
+ */
 export function wrapUntrustedContent(text: string, productId: number): string {
-  return `<untrusted_supplier_content product_id="${productId}">${text}</untrusted_supplier_content>`;
+  const sanitized = text.replaceAll(
+    "</untrusted_supplier_content>",
+    "&lt;/untrusted_supplier_content&gt;",
+  );
+  return `<untrusted_supplier_content product_id="${productId}">${sanitized}</untrusted_supplier_content>`;
 }
 
 /** CONTRACT-09: Extract ISO country codes from shipping_regions. */

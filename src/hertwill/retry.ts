@@ -54,6 +54,8 @@ export function getRetryDelay(response: Response): number {
  * - Randomized jitter
  * - Only retries on retryable status codes (429, 502, 503, 504) and network errors
  * - Non-retryable 4xx errors abort immediately
+ * - 429 errors respect `retryAfterSeconds` from the error when available,
+ *   overriding the generic exponential backoff with the server-specified delay.
  */
 export function createRetryOptions(): pRetry.Options {
   return {
@@ -62,8 +64,6 @@ export function createRetryOptions(): pRetry.Options {
     factor: 2,
     randomize: true,
     shouldRetry: (error: unknown) => {
-      // Duck-type check for errors with a status property
-      // (HertwillApiError will be created in Plan 03; for now use duck typing)
       if (
         error !== null &&
         typeof error === "object" &&
@@ -77,6 +77,23 @@ export function createRetryOptions(): pRetry.Options {
       }
       // Network errors and retryable statuses: retry
       return true;
+    },
+    onFailedAttempt: async (error) => {
+      // When a 429 carries retryAfterSeconds, sleep for that duration
+      // instead of p-retry's generic exponential backoff.
+      const cause = error.cause ?? error;
+      if (
+        cause !== null &&
+        typeof cause === "object" &&
+        "retryAfterSeconds" in cause &&
+        typeof (cause as { retryAfterSeconds: unknown }).retryAfterSeconds ===
+          "number"
+      ) {
+        const delay =
+          (cause as { retryAfterSeconds: number }).retryAfterSeconds * 1000 +
+          Math.random() * 2000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     },
   };
 }
