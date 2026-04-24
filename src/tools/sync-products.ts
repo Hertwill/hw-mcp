@@ -4,7 +4,7 @@ import type { z } from "zod";
 import { confirmAction } from "../elicitation.js";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { SyncProductsInput } from "../schemas/sync-products.js";
 import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
@@ -78,8 +78,10 @@ export function registerSyncProducts(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "sync_products",
     {
+      title: TOOL_TITLES.sync_products,
       description: TOOL_DESCRIPTIONS.sync_products,
       inputSchema: SyncProductsInput.shape,
+      annotations: TOOL_ANNOTATIONS.sync_products,
     },
     createSyncProductsHandler(deps),
   );

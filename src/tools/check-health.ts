@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { CheckHealthInput } from "../schemas/check-health.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { toolResult } from "./helpers.js";
 import type { HealthCacheEntry, ToolDeps } from "./types.js";
 
@@ -101,8 +101,10 @@ export function registerCheckHealth(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "check_health",
     {
+      title: TOOL_TITLES.check_health,
       description: TOOL_DESCRIPTIONS.check_health,
       inputSchema: CheckHealthInput.shape,
+      annotations: TOOL_ANNOTATIONS.check_health,
     },
     createCheckHealthHandler(deps),
   );

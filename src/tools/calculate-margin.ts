@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { CalculateMarginInput } from "../schemas/calculate-margin.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
@@ -87,8 +87,10 @@ export function registerCalculateMargin(
   server.registerTool(
     "calculate_margin",
     {
+      title: TOOL_TITLES.calculate_margin,
       description: TOOL_DESCRIPTIONS.calculate_margin,
       inputSchema: CalculateMarginInput.shape,
+      annotations: TOOL_ANNOTATIONS.calculate_margin,
     },
     createCalculateMarginHandler(deps),
   );

@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { GetSyncJobsInput } from "../schemas/get-sync-jobs.js";
 import { transformPagination, transformSyncJob } from "../transforms/index.js";
 import { clampPerPage, requireApiKey, toolResult } from "./helpers.js";
@@ -84,8 +84,10 @@ export function registerGetSyncJobs(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "get_sync_jobs",
     {
+      title: TOOL_TITLES.get_sync_jobs,
       description: TOOL_DESCRIPTIONS.get_sync_jobs,
       inputSchema: GetSyncJobsInput.shape,
+      annotations: TOOL_ANNOTATIONS.get_sync_jobs,
     },
     createGetSyncJobsHandler(deps),
   );

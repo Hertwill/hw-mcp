@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { SearchProductsInput } from "../schemas/search-products.js";
 import {
   transformPagination,
@@ -94,8 +94,10 @@ export function registerSearchProducts(
   server.registerTool(
     "search_products",
     {
+      title: TOOL_TITLES.search_products,
       description: TOOL_DESCRIPTIONS.search_products,
       inputSchema: SearchProductsInput.shape,
+      annotations: TOOL_ANNOTATIONS.search_products,
     },
     createSearchProductsHandler(deps),
   );

@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { EvaluateProductInput } from "../schemas/evaluate-product.js";
 import {
   transformShipsTo,
@@ -125,8 +125,10 @@ export function registerEvaluateProduct(
   server.registerTool(
     "evaluate_product",
     {
+      title: TOOL_TITLES.evaluate_product,
       description: TOOL_DESCRIPTIONS.evaluate_product,
       inputSchema: EvaluateProductInput.shape,
+      annotations: TOOL_ANNOTATIONS.evaluate_product,
     },
     createEvaluateProductHandler(deps),
   );

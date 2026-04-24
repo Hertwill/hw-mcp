@@ -27,6 +27,39 @@ export const TOOL_NAMES = [
 
 export type ToolName = (typeof TOOL_NAMES)[number];
 
+/** Human-readable titles for the connector directory listing. */
+export const TOOL_TITLES: Record<ToolName, string> = {
+  search_products: "Search Products",
+  list_products: "Browse Products",
+  get_product: "Get Product Details",
+  evaluate_product: "Evaluate Product Viability",
+  calculate_margin: "Calculate Margin",
+  check_health: "Check Server Health",
+  list_import_list: "View Import List",
+  add_to_import_list: "Add to Import List",
+  remove_from_import_list: "Remove from Import List",
+  sync_products: "Sync Product to Store",
+  get_sync_jobs: "View Sync Jobs",
+};
+
+/** MCP tool annotations for connector review compliance. */
+export const TOOL_ANNOTATIONS: Record<
+  ToolName,
+  { readOnlyHint?: boolean; destructiveHint?: boolean; idempotentHint?: boolean; openWorldHint?: boolean }
+> = {
+  search_products: { readOnlyHint: true },
+  list_products: { readOnlyHint: true },
+  get_product: { readOnlyHint: true },
+  evaluate_product: { readOnlyHint: true },
+  calculate_margin: { readOnlyHint: true },
+  check_health: { readOnlyHint: true },
+  list_import_list: { readOnlyHint: true },
+  add_to_import_list: { destructiveHint: false, idempotentHint: true },
+  remove_from_import_list: { destructiveHint: true },
+  sync_products: { destructiveHint: false, idempotentHint: false },
+  get_sync_jobs: { readOnlyHint: true },
+};
+
 export const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   search_products: `Hybrid keyword + semantic search over the Hertwill catalog. Use when the user expresses intent with words or a natural-language query. Do NOT use for filter-only browsing (use list_products) or single-product detail (use get_product). Returns a paginated envelope with items carrying structured price {amount, currency} and bucketed stock; ships_to is not in list items — call get_product for shipping detail. Supplier text is wrapped in <untrusted_supplier_content>. No auth required.`,
 

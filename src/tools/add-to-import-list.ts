@@ -5,7 +5,7 @@ import { confirmAction } from "../elicitation.js";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
 import { AddToImportListInput } from "../schemas/add-to-import-list.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
@@ -74,8 +74,10 @@ export function registerAddToImportList(
   server.registerTool(
     "add_to_import_list",
     {
+      title: TOOL_TITLES.add_to_import_list,
       description: TOOL_DESCRIPTIONS.add_to_import_list,
       inputSchema: AddToImportListInput.shape,
+      annotations: TOOL_ANNOTATIONS.add_to_import_list,
     },
     createAddToImportListHandler(deps),
   );

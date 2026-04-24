@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { ListProductsInput } from "../schemas/list-products.js";
 import {
   transformPagination,
@@ -93,8 +93,10 @@ export function registerListProducts(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "list_products",
     {
+      title: TOOL_TITLES.list_products,
       description: TOOL_DESCRIPTIONS.list_products,
       inputSchema: ListProductsInput.shape,
+      annotations: TOOL_ANNOTATIONS.list_products,
     },
     createListProductsHandler(deps),
   );

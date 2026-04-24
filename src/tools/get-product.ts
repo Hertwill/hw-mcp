@@ -4,7 +4,7 @@ import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
 import { logger } from "../logger.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { GetProductInput } from "../schemas/get-product.js";
 import { transformProductDetail } from "../transforms/index.js";
 import { toolResult } from "./helpers.js";
@@ -113,8 +113,10 @@ export function registerGetProduct(server: McpServer, deps: ToolDeps): void {
   server.registerTool(
     "get_product",
     {
+      title: TOOL_TITLES.get_product,
       description: TOOL_DESCRIPTIONS.get_product,
       inputSchema: GetProductInput.shape,
+      annotations: TOOL_ANNOTATIONS.get_product,
     },
     createGetProductHandler(deps),
   );

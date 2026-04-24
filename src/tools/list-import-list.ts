@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_DESCRIPTIONS } from "../schemas/descriptions.js";
+import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
 import { ListImportListInput } from "../schemas/list-import-list.js";
 import {
   transformImportListItem,
@@ -91,8 +91,10 @@ export function registerListImportList(
   server.registerTool(
     "list_import_list",
     {
+      title: TOOL_TITLES.list_import_list,
       description: TOOL_DESCRIPTIONS.list_import_list,
       inputSchema: ListImportListInput.shape,
+      annotations: TOOL_ANNOTATIONS.list_import_list,
     },
     createListImportListHandler(deps),
   );
