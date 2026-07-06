@@ -397,9 +397,6 @@
             "type": "string",
             "description": "Coverage tag for the list (e.g. \"EU\", \"EU . UK . USA\")."
           },
-          "description": {
-            "type": "string"
-          },
           "per_item": {
             "type": "boolean",
             "description": "True when the brand has at least one public product on this list that ships per item (large/extra-large size class)."

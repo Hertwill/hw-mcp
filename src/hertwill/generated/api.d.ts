@@ -1526,7 +1526,6 @@ export interface components {
             id?: number;
             /** @description Coverage tag for the list (e.g. "EU", "EU . UK . USA"). */
             name?: string;
-            description?: string;
             /** @description True when the brand has at least one public product on this list that ships per item (large/extra-large size class). */
             per_item?: boolean;
             shipping_prices?: components["schemas"]["ShippingPrice"][];

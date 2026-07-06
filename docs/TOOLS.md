@@ -97,7 +97,7 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 
 **AUTH:** None required.
 
-**RETURNS:** `{data: [{id, name, description, per_item, shipping_prices: [{origin_iso_code, dest_iso_code, price={amount, currency}|null, origin_country, destination_country}]}]}`.
+**RETURNS:** `{data: [{id, name, per_item, shipping_prices: [{origin_iso_code, dest_iso_code, price={amount, currency}|null, origin_country, destination_country}]}]}`.
 
 **EXAMPLE INTENT:** "What does brand 214 charge to ship to Germany and the UK?"
 

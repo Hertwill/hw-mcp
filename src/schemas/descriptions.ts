@@ -49,7 +49,12 @@ export const TOOL_TITLES: Record<ToolName, string> = {
 /** MCP tool annotations for connector review compliance. */
 export const TOOL_ANNOTATIONS: Record<
   ToolName,
-  { readOnlyHint?: boolean; destructiveHint?: boolean; idempotentHint?: boolean; openWorldHint?: boolean }
+  {
+    readOnlyHint?: boolean;
+    destructiveHint?: boolean;
+    idempotentHint?: boolean;
+    openWorldHint?: boolean;
+  }
 > = {
   search_products: { readOnlyHint: true },
   list_products: { readOnlyHint: true },
@@ -75,7 +80,7 @@ export const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
 
   get_brand: `Return one Hertwill brand by ID, including its marketing material links (logo, cover, and marketing_assets_url for downloadable banners/creatives). Use when you have a brand ID and need its assets or profile. Do NOT use to look up a brand's shipping rates (use get_brand_shipping_price_lists) or to browse a brand's products (use list_products). Returns {id, name, slug, description, logo, cover, marketing_assets_url}. No auth required.`,
 
-  get_brand_shipping_price_lists: `Return a Hertwill brand's shipping price lists — each a coverage tag (e.g. "EU") with per origin->destination rates — so you can estimate delivery costs before importing its products. Do NOT use for a brand's marketing assets or profile (use get_brand) or for a single product's shipping coverage (use get_product). Returns {data:[{id, name, description, per_item, shipping_prices:[{origin_iso_code, dest_iso_code, price, ...}]}]}. No auth required.`,
+  get_brand_shipping_price_lists: `Return a Hertwill brand's shipping price lists — each a coverage tag (e.g. "EU") with per origin->destination rates — so you can estimate delivery costs before importing its products. Do NOT use for a brand's marketing assets or profile (use get_brand) or for a single product's shipping coverage (use get_product). Returns {data:[{id, name, per_item, shipping_prices:[{origin_iso_code, dest_iso_code, price, ...}]}]}. No auth required.`,
 
   evaluate_product: `Produce a factual structured viability scorecard for one product — margin inputs, shipping coverage, variant spread, and stock signal. Use when the user wants a comparable decision summary. Do NOT use when the user only wants product details (use get_product), pure margin math (use calculate_margin), or to find candidates first (use search_products). No auth required.`,
 

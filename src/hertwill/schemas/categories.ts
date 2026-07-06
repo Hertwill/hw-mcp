@@ -100,7 +100,6 @@ export type ShippingPrice = z.infer<typeof ShippingPriceSchema>;
 export const ShippingPriceListSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: z.string().nullable().optional(),
   per_item: z.boolean().optional(),
   shipping_prices: z.array(ShippingPriceSchema),
 });

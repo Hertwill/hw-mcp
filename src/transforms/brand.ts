@@ -25,7 +25,6 @@ export function transformShippingPriceList(
   return {
     id: list.id,
     name: list.name,
-    description: list.description ?? null,
     per_item: list.per_item ?? false,
     shipping_prices: list.shipping_prices.map((p) => ({
       origin_iso_code: p.origin_iso_code,

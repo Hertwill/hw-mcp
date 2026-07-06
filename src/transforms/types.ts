@@ -106,7 +106,6 @@ export interface McpShippingPriceList {
   id: number;
   /** Coverage tag, e.g. "EU", "EU · UK · USA". */
   name: string;
-  description: string | null;
   /** True when the brand ships at least one product on this list per item. */
   per_item: boolean;
   shipping_prices: McpShippingPrice[];

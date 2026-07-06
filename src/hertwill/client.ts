@@ -355,7 +355,7 @@ export class HertwillClient {
   // Authenticated endpoints (API key required) — 6 methods
   // ---------------------------------------------------------------------------
 
-  /** 8. GET /v1/import-list — List products in import list. */
+  /** 10. GET /v1/import-list — List products in import list. */
   async listImportList(params?: {
     page?: number;
     per_page?: number;
@@ -377,7 +377,7 @@ export class HertwillClient {
     );
   }
 
-  /** 9. POST /v1/import-list/products — Add products to import list (max 50). */
+  /** 11. POST /v1/import-list/products — Add products to import list (max 50). */
   async addToImportList(
     productIds: number[],
   ): Promise<AddToImportListResponse> {
@@ -392,7 +392,7 @@ export class HertwillClient {
     );
   }
 
-  /** 10. DELETE /v1/import-list/products/{productId} — Remove product from import list. */
+  /** 12. DELETE /v1/import-list/products/{productId} — Remove product from import list. */
   async removeFromImportList(productId: number): Promise<void> {
     this.requireAuth("removeFromImportList");
     return this.limiter.schedule(() =>
@@ -416,7 +416,7 @@ export class HertwillClient {
     );
   }
 
-  /** 11. POST /v1/sync/products — Start syncing a product to connected store. */
+  /** 13. POST /v1/sync/products — Start syncing a product to connected store. */
   async syncProducts(body: {
     product_id: number;
     default_store_markup: number;
@@ -436,7 +436,7 @@ export class HertwillClient {
     );
   }
 
-  /** 12. GET /v1/sync/jobs — List sync jobs with optional status filter. */
+  /** 14. GET /v1/sync/jobs — List sync jobs with optional status filter. */
   async listSyncJobs(params?: {
     page?: number;
     per_page?: number;
@@ -448,7 +448,7 @@ export class HertwillClient {
     );
   }
 
-  /** 13. GET /v1/sync/jobs/{productId} — Get sync status for a specific product. */
+  /** 15. GET /v1/sync/jobs/{productId} — Get sync status for a specific product. */
   async getSyncJob(productId: number): Promise<SyncJobDetailResponse> {
     this.requireAuth("getSyncJob");
     return this.request(
@@ -465,7 +465,7 @@ export class HertwillClient {
   // JWT Auth endpoints (no API key required) — 5 methods
   // ---------------------------------------------------------------------------
 
-  /** 14. POST /v1/auth/register — Register a new account. */
+  /** 16. POST /v1/auth/register — Register a new account. */
   async register(params: {
     email: string;
     password: string;
@@ -477,7 +477,7 @@ export class HertwillClient {
     );
   }
 
-  /** 15. POST /v1/auth/login — Login and get JWT + refresh token. */
+  /** 17. POST /v1/auth/login — Login and get JWT + refresh token. */
   async login(params: {
     email: string;
     password: string;
@@ -487,7 +487,7 @@ export class HertwillClient {
     );
   }
 
-  /** 16. POST /v1/auth/refresh — Refresh JWT token using refresh token. */
+  /** 18. POST /v1/auth/refresh — Refresh JWT token using refresh token. */
   async refreshToken(token: string): Promise<RefreshResponse> {
     return this.request("POST /v1/auth/refresh", RefreshResponseSchema, () =>
       this.api.POST("/v1/auth/refresh", {
@@ -496,7 +496,7 @@ export class HertwillClient {
     );
   }
 
-  /** 17. POST /v1/api-keys — Create a new store-scoped API key (requires JWT). */
+  /** 19. POST /v1/api-keys — Create a new store-scoped API key (requires JWT). */
   async createApiKey(
     jwtToken: string,
     params: { name: string; store_id: number },
@@ -513,7 +513,7 @@ export class HertwillClient {
     );
   }
 
-  /** 18. DELETE /v1/api-keys/{id} — Revoke an API key (requires JWT). */
+  /** 20. DELETE /v1/api-keys/{id} — Revoke an API key (requires JWT). */
   async revokeApiKey(jwtToken: string, keyId: number): Promise<void> {
     await this.limiter.schedule(() =>
       pRetry(async () => {

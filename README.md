@@ -67,7 +67,7 @@ Add to `.vscode/mcp.json`:
 
 Each follows the same pattern — add an MCP server entry pointing to `npx @hertwill/mcp` with the `HERTWILL_API_KEY` env var. Refer to your client's MCP configuration docs.
 
-> **No API key?** The server starts without one. All 6 discovery tools work immediately — you only need a key for import list and sync operations. Get one at [hertwill.com](https://hertwill.com).
+> **No API key?** The server starts without one. All 8 discovery tools work immediately — you only need a key for import list and sync operations. Get one at [hertwill.com](https://hertwill.com).
 
 ## What You Can Ask
 

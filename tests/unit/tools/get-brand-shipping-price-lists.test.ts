@@ -42,7 +42,6 @@ function listsFixture() {
       {
         id: 10,
         name: "EU",
-        description: "EU coverage",
         per_item: false,
         shipping_prices: [
           {
@@ -78,6 +77,8 @@ describe("get_brand_shipping_price_lists handler", () => {
     };
     expect(sc.data).toHaveLength(1);
     expect(sc.data[0].name).toBe("EU");
+    // Internal free-text description is not surfaced to end users.
+    expect(sc.data[0]).not.toHaveProperty("description");
     expect(sc.data[0].shipping_prices[0].price).toEqual({
       amount: 4.5,
       currency: "EUR",
