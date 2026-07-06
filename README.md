@@ -98,7 +98,7 @@ Once connected, talk to your AI agent naturally:
 
 | Tool | Purpose |
 |------|---------|
-| `list_import_list` | View products in your import list (incl. `cost` = your wholesale price) |
+| `list_import_list` | View products in your import list (incl. `cost` = the list wholesale price) |
 | `add_to_import_list` | Add products by ID to your import list |
 | `remove_from_import_list` | Remove a product from your import list |
 | `get_sync_jobs` | Check Shopify/WooCommerce sync job status |

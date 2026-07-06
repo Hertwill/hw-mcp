@@ -12,9 +12,11 @@ export const ImportListItemSchema = z.object({
   product_id: z.number().optional(),
   name: z.string(),
   sku: z.string().optional(),
+  // Required & non-null: McpImportListItem.cost is a non-null McpPrice, and the
+  // transform's `item.cost ?? item.price` fallback relies on price staying so.
   price: z.number(),
   sale_price: z.number().nullable().optional(),
-  // Merchant cost basis = the Hertwill Wholesale Price (equals `price`).
+  // Merchant cost basis; the API sets it equal to `price` (list wholesale).
   // Optional so responses from an API version predating the field still parse.
   cost: z.number().nullable().optional(),
   stock_status: z.string().optional(),
