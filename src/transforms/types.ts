@@ -72,8 +72,7 @@ export interface McpImportListItem {
   price: McpPrice;
   sale_price: McpPrice | null;
   /** Your cost basis: the Hertwill API sets this equal to `price` (the list
-   *  Wholesale Price, before any `sale_price`), never its internal COGS. Maps
-   *  directly to your store's cost-per-item field. */
+   *  Wholesale Price, before any `sale_price`), never its internal COGS. */
   cost: McpPrice;
   stock_status: string;
   sync_status: string;
