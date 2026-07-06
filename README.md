@@ -67,7 +67,7 @@ Add to `.vscode/mcp.json`:
 
 Each follows the same pattern — add an MCP server entry pointing to `npx @hertwill/mcp` with the `HERTWILL_API_KEY` env var. Refer to your client's MCP configuration docs.
 
-> **No API key?** The server starts without one. All 6 discovery tools work immediately — you only need a key for import list and sync operations. Get one at [hertwill.com](https://hertwill.com).
+> **No API key?** The server starts without one. All 8 discovery tools work immediately — you only need a key for import list and sync operations. Get one at [hertwill.com](https://hertwill.com).
 
 ## What You Can Ask
 
@@ -79,7 +79,7 @@ Once connected, talk to your AI agent naturally:
 - *"Add products 1001, 1002, 1003 to my import list"*
 - *"What's the health of my store connection?"*
 
-## Tools (12)
+## Tools (13)
 
 ### Discovery (no API key required)
 
@@ -88,6 +88,8 @@ Once connected, talk to your AI agent naturally:
 | `search_products` | Hybrid keyword + semantic search with filters (category, brand, price, stock, EU shipping) |
 | `list_products` | Browse and filter catalog without a search query |
 | `get_product` | Full product detail — variants, shipping regions, descriptions |
+| `get_brand` | Brand detail incl. marketing material links (logo, cover, downloadable assets) |
+| `get_brand_shipping_price_lists` | A brand's shipping price lists (coverage tags + per origin→destination rates) |
 | `evaluate_product` | Factual viability scorecard: margin inputs, shipping, stock, variant spread |
 | `calculate_margin` | Pure-math break-even and margin calculator (no network call) |
 | `check_health` | Server version, API reachability, rate limit bucket state |
@@ -96,7 +98,6 @@ Once connected, talk to your AI agent naturally:
 
 | Tool | Purpose |
 |------|---------|
-| `check_auth` | Validate API key format and authentication status |
 | `list_import_list` | View products in your import list |
 | `add_to_import_list` | Add products by ID to your import list |
 | `remove_from_import_list` | Remove a product from your import list |

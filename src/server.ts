@@ -44,7 +44,7 @@ export interface CreateServerOverrides {
 }
 
 /**
- * Build the Hertwill MCP server with all 6 public tools registered.
+ * Build the Hertwill MCP server with all 8 public tools registered.
  *
  * Safe to call with no `HERTWILL_API_KEY` set — public tools work without a
  * key. Phase 5 will extend this to conditionally register authenticated
@@ -95,7 +95,7 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   };
 
   registerPublicTools(server, deps);
-  logger.info({ tools: 6 }, "Registered public Hertwill tools");
+  logger.info({ tools: 8 }, "Registered public Hertwill tools");
 
   // D-24: register authenticated tools only when an API key is configured.
   if (typeof apiKey === "string" && apiKey.length > 0) {

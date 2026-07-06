@@ -1,3 +1,4 @@
+export { transformBrand, transformShippingPriceList } from "./brand.js";
 export { transformImportListItem } from "./import-list.js";
 export { transformPagination } from "./pagination.js";
 export {
@@ -13,6 +14,7 @@ export {
 } from "./product.js";
 export { transformSyncJob } from "./sync.js";
 export type {
+  McpBrand,
   McpHints,
   McpImportListItem,
   McpListEnvelope,
@@ -20,6 +22,8 @@ export type {
   McpPrice,
   McpProductDetail,
   McpProductListItem,
+  McpShippingPrice,
+  McpShippingPriceList,
   McpStockInfo,
   McpSyncJob,
   McpVariation,

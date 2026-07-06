@@ -15,6 +15,8 @@ export const TOOL_NAMES = [
   "search_products",
   "list_products",
   "get_product",
+  "get_brand",
+  "get_brand_shipping_price_lists",
   "evaluate_product",
   "calculate_margin",
   "check_health",
@@ -32,6 +34,8 @@ export const TOOL_TITLES: Record<ToolName, string> = {
   search_products: "Search Products",
   list_products: "Browse Products",
   get_product: "Get Product Details",
+  get_brand: "Get Brand Details",
+  get_brand_shipping_price_lists: "Get Brand Shipping Rates",
   evaluate_product: "Evaluate Product Viability",
   calculate_margin: "Calculate Margin",
   check_health: "Check Server Health",
@@ -45,11 +49,18 @@ export const TOOL_TITLES: Record<ToolName, string> = {
 /** MCP tool annotations for connector review compliance. */
 export const TOOL_ANNOTATIONS: Record<
   ToolName,
-  { readOnlyHint?: boolean; destructiveHint?: boolean; idempotentHint?: boolean; openWorldHint?: boolean }
+  {
+    readOnlyHint?: boolean;
+    destructiveHint?: boolean;
+    idempotentHint?: boolean;
+    openWorldHint?: boolean;
+  }
 > = {
   search_products: { readOnlyHint: true },
   list_products: { readOnlyHint: true },
   get_product: { readOnlyHint: true },
+  get_brand: { readOnlyHint: true },
+  get_brand_shipping_price_lists: { readOnlyHint: true },
   evaluate_product: { readOnlyHint: true },
   calculate_margin: { readOnlyHint: true },
   check_health: { readOnlyHint: true },
@@ -66,6 +77,10 @@ export const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   list_products: `Browse and filter the Hertwill catalog without a search query (category, brand, price range, stock status, shipping region). Use for filter-driven enumeration. Do NOT use when the request has keywords or natural-language intent (use search_products), or when the user wants one product's detail (use get_product). Returns a paginated envelope with structured prices and bucketed stock; ships_to is absent from list items — use get_product for shipping. No auth required.`,
 
   get_product: `Return full detail for a single Hertwill product by ID, including variations and shipping coverage (ships_to as ISO country codes). Use when you already have a product ID and need variants or shipping detail. Do NOT use to search (use search_products), browse (use list_products), or score viability (use evaluate_product). Supplier text is wrapped in <untrusted_supplier_content>. No auth required.`,
+
+  get_brand: `Return one Hertwill brand by ID, including its marketing material links (logo, cover, and marketing_assets_url for downloadable banners/creatives). Use when you have a brand ID and need its assets or profile. Do NOT use to look up a brand's shipping rates (use get_brand_shipping_price_lists) or to browse a brand's products (use list_products). Returns {id, name, slug, description, logo, cover, marketing_assets_url}. No auth required.`,
+
+  get_brand_shipping_price_lists: `Return a Hertwill brand's shipping price lists — each a coverage tag (e.g. "EU") with per origin->destination rates — so you can estimate delivery costs before importing its products. Do NOT use for a brand's marketing assets or profile (use get_brand) or for a single product's shipping coverage (use get_product). Returns {data:[{id, name, per_item, shipping_prices:[{origin_iso_code, dest_iso_code, price, ...}]}]}. No auth required.`,
 
   evaluate_product: `Produce a factual structured viability scorecard for one product — margin inputs, shipping coverage, variant spread, and stock signal. Use when the user wants a comparable decision summary. Do NOT use when the user only wants product details (use get_product), pure margin math (use calculate_margin), or to find candidates first (use search_products). No auth required.`,
 

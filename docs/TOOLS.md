@@ -1,6 +1,6 @@
 # Hertwill MCP Tool Catalog
 
-This file is the single source of truth for all 11 Hertwill MCP tool descriptions (per D-03).
+This file is the single source of truth for all 13 Hertwill MCP tool descriptions (per D-03).
 Every tool below follows the mandatory template: PURPOSE / WHEN TO USE / DO NOT USE WHEN / PREFER OVER / AUTH / RETURNS / EXAMPLE INTENT.
 
 A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the registered descriptions in `src/schemas/descriptions.ts` stay in sync with this document and that every tool includes a `DO NOT USE WHEN` clause routing to at least one sibling tool.
@@ -62,6 +62,44 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 **RETURNS:** Single product detail `{id, title, description, price={amount, currency}, stock_level, stock_checked_at, variations[], ships_to[]}` with supplier-provided text wrapped in `<untrusted_supplier_content product_id="...">`.
 
 **EXAMPLE INTENT:** "Show me the full spec and EU shipping coverage for product 4827."
+
+## get_brand
+
+**PURPOSE:** Return one brand by ID, including its marketing material links (`logo`, `cover`, and `marketing_assets_url` for downloadable banners/creatives).
+
+**WHEN TO USE:** The user has a brand ID (from `list_products`, `search_products`, or the brands resource) and wants the brand's assets, marketing materials, or profile.
+
+**DO NOT USE WHEN:**
+- The user wants the brand's shipping rates -> use `get_brand_shipping_price_lists`
+- The user wants to browse the brand's products -> use `list_products`
+- The user wants one product's detail -> use `get_product`
+
+**PREFER OVER:** The brands resource when you need one specific brand's full profile (including marketing links) rather than the whole brand list.
+
+**AUTH:** None required.
+
+**RETURNS:** `{id, name, slug, description, logo, cover, marketing_assets_url}`.
+
+**EXAMPLE INTENT:** "Give me the marketing banners and logo for brand 214 so I can add them to my store."
+
+## get_brand_shipping_price_lists
+
+**PURPOSE:** Return a brand's shipping price lists — each a coverage tag (e.g. "EU") with per origin->destination rates — so you can estimate delivery costs before importing its products.
+
+**WHEN TO USE:** The user wants to know what it costs to ship a brand's products to given countries, or wants to compare brands by shipping coverage.
+
+**DO NOT USE WHEN:**
+- The user wants the brand's marketing assets or profile -> use `get_brand`
+- The user wants a single product's shipping coverage -> use `get_product`
+- The user wants to browse the brand's products -> use `list_products`
+
+**PREFER OVER:** `get_product` when the question is about brand-level shipping economics rather than one product's `ships_to` list.
+
+**AUTH:** None required.
+
+**RETURNS:** `{data: [{id, name, per_item, shipping_prices: [{origin_iso_code, dest_iso_code, price={amount, currency}|null, origin_country, destination_country}]}]}`.
+
+**EXAMPLE INTENT:** "What does brand 214 charge to ship to Germany and the UK?"
 
 ## evaluate_product
 

@@ -20,6 +20,11 @@ export {
   EvaluateProductInput,
   type EvaluateProductParams,
 } from "./evaluate-product.js";
+export { GetBrandInput, type GetBrandParams } from "./get-brand.js";
+export {
+  GetBrandShippingPriceListsInput,
+  type GetBrandShippingPriceListsParams,
+} from "./get-brand-shipping-price-lists.js";
 export { GetProductInput, type GetProductParams } from "./get-product.js";
 export { GetSyncJobsInput, type GetSyncJobsParams } from "./get-sync-jobs.js";
 export {
