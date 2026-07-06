@@ -2,6 +2,14 @@
   "name": "@hertwill/mcp",
   "version": "1.1.0",
   "description": "MCP server wrapping the Hertwill dropshipping API for AI agent product sourcing",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hertwill/hw-mcp.git"
+  },
+  "homepage": "https://github.com/Hertwill/hw-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/Hertwill/hw-mcp/issues"
+  },
   "type": "module",
   "bin": {
     "hertwill-mcp": "./dist/index.js"
