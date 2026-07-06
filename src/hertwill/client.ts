@@ -13,7 +13,9 @@ import { createRetryOptions, isRetryableStatus } from "./retry.js";
 import { validateResponse } from "./schemas/common.js";
 import type {
   AddToImportListResponse,
+  BrandDetailResponse,
   BrandListResponse,
+  BrandShippingPriceListsResponse,
   CategoryDetailResponse,
   CategoryListResponse,
   CreateApiKeyResponse,
@@ -30,7 +32,9 @@ import type {
 } from "./schemas/index.js";
 import {
   AddToImportListResponseSchema,
+  BrandDetailResponseSchema,
   BrandListResponseSchema,
+  BrandShippingPriceListsResponseSchema,
   CategoryDetailResponseSchema,
   CategoryListResponseSchema,
   CreateApiKeyResponseSchema,
@@ -228,7 +232,7 @@ export class HertwillClient {
   }
 
   // ---------------------------------------------------------------------------
-  // Public endpoints (no auth required) — 7 methods
+  // Public endpoints (no auth required) — 9 methods
   // ---------------------------------------------------------------------------
 
   /** 1. GET /v1/products — Browse products with filtering, sorting, pagination. */
@@ -321,6 +325,30 @@ export class HertwillClient {
   async listBrands(): Promise<BrandListResponse> {
     return this.request("GET /v1/brands", BrandListResponseSchema, () =>
       this.api.GET("/v1/brands"),
+    );
+  }
+
+  /** 8. GET /v1/brands/{id} — Get one brand (incl. marketing material links). */
+  async getBrand(id: number): Promise<BrandDetailResponse> {
+    return this.request("GET /v1/brands/{id}", BrandDetailResponseSchema, () =>
+      this.api.GET("/v1/brands/{id}", {
+        params: { path: { id } },
+      }),
+    );
+  }
+
+  /** 9. GET /v1/brands/{id}/shipping-price-lists — Brand shipping rates. */
+  async getBrandShippingPriceLists(
+    id: number,
+    origin?: string,
+  ): Promise<BrandShippingPriceListsResponse> {
+    return this.request(
+      "GET /v1/brands/{id}/shipping-price-lists",
+      BrandShippingPriceListsResponseSchema,
+      () =>
+        this.api.GET("/v1/brands/{id}/shipping-price-lists", {
+          params: { path: { id }, query: origin ? { origin } : {} },
+        }),
     );
   }
 

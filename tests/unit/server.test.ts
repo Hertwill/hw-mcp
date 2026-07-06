@@ -10,6 +10,8 @@ const EXPECTED_TOOLS = [
   "search_products",
   "list_products",
   "get_product",
+  "get_brand",
+  "get_brand_shipping_price_lists",
   "evaluate_product",
   "calculate_margin",
   "check_health",
@@ -52,7 +54,7 @@ describe("createServer", () => {
     expect(() => createServer({ apiKey: undefined })).not.toThrow();
   });
 
-  it("registers all 6 public tools (TOOLS-PUB-07)", async () => {
+  it("registers all 8 public tools (TOOLS-PUB-07)", async () => {
     const tools = await listToolsViaInMemory(undefined);
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual(EXPECTED_TOOLS);
@@ -67,7 +69,7 @@ describe("createServer", () => {
     }
   });
 
-  it("with API key also registers all 6 public tools (Phase-4 regression)", async () => {
+  it("with API key also registers all 8 public tools (Phase-4 regression)", async () => {
     const tools = await listToolsViaInMemory("hw_test_FAKEKEY");
     const names = tools.map((t) => t.name);
     for (const expected of EXPECTED_TOOLS) {
@@ -131,7 +133,7 @@ describe("createServer", () => {
     const tools = await listToolsViaInMemory("hw_test_VALIDFORMAT123");
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual(EXPECTED_TOOLS_WITH_AUTH);
-    expect(names.length).toBe(11);
+    expect(names.length).toBe(13);
   });
 
   it("without API key: authenticated tools are NOT registered", async () => {

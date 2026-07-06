@@ -1370,6 +1370,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/brands/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get brand by ID
+         * @description Retrieve a single brand, including its marketing material links (logo, cover, marketing_assets_url) and shipping origin country.
+         */
+        get: operations["getBrandById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/brands/{id}/shipping-price-lists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a brand's shipping price lists
+         * @description Returns the brand's shipping price lists (coverage tag + per origin->destination rate).
+         */
+        get: operations["getBrandShippingPriceLists"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1444,7 +1484,14 @@ export interface components {
             name?: string;
             slug?: string;
             description?: string | null;
+            /** @description URL of the brand logo image. */
             logo?: string | null;
+            /** @description URL of the brand cover/banner image. */
+            cover?: string | null;
+            /** @description Link to the brand's downloadable marketing materials (banners, promo images, product photography) for use in your store. */
+            marketing_assets_url?: string | null;
+            /** @description ISO-2 country code the brand ships from. Use as the `origin` filter on the brand shipping price-lists endpoint. */
+            shipping_origin_iso_code?: string | null;
         };
         Pagination: {
             page?: number;
@@ -1462,6 +1509,30 @@ export interface components {
                 request_id?: string;
             };
         };
+        /** @description A single origin->destination shipping rate lane. */
+        ShippingPrice: {
+            id?: number | null;
+            /** @description ISO-2 origin country code (the brand's shipping origin). */
+            origin_iso_code?: string;
+            /** @description ISO-2 destination country code. */
+            dest_iso_code?: string;
+            /** @description Shipping price for this lane in EUR. null when no rate is defined for the destination. */
+            price?: number | null;
+            /** @description Human-readable origin country name. */
+            origin_country?: string;
+            /** @description Human-readable destination country name. */
+            destination_country?: string;
+        };
+        /** @description A brand's shipping price list. The name is a coverage tag (e.g. "EU", "EU . UK . USA"). shipping_prices holds one rate per origin->destination lane. */
+        ShippingPriceList: {
+            id?: number;
+            /** @description Coverage tag for the list (e.g. "EU", "EU . UK . USA"). */
+            name?: string;
+            description?: string;
+            /** @description True when the brand has at least one public product on this list that ships per item (large/extra-large size class). */
+            per_item?: boolean;
+            shipping_prices?: components["schemas"]["ShippingPrice"][];
+        };
     };
     responses: never;
     parameters: {
@@ -1475,4 +1546,82 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export interface operations {
+    getBrandById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Brand ID (numeric). */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Brand details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["Brand"];
+                        meta?: {
+                            request_id?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Brand not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBrandShippingPriceLists: {
+        parameters: {
+            query?: {
+                /** @description Optional ISO-2 origin country code to filter lanes to a single shipping origin. */
+                origin?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Brand ID (numeric). */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The brand's shipping price lists */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ShippingPriceList"][];
+                        meta?: {
+                            request_id?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Brand not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+}

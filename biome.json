@@ -21,6 +21,11 @@
   },
   "overrides": [
     {
+      "includes": ["src/hertwill/generated/**"],
+      "formatter": { "enabled": false },
+      "linter": { "enabled": false }
+    },
+    {
       "includes": ["tests/**", "scripts/**"],
       "linter": {
         "rules": {

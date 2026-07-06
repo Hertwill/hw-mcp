@@ -14,6 +14,9 @@ export const ImportListItemSchema = z.object({
   sku: z.string().optional(),
   price: z.number(),
   sale_price: z.number().nullable().optional(),
+  // Merchant cost basis = the Hertwill Wholesale Price (equals `price`).
+  // Optional so responses from an API version predating the field still parse.
+  cost: z.number().nullable().optional(),
   stock_status: z.string().optional(),
   sync_status: z.string().optional(),
   status: z.string().optional(),

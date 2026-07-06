@@ -71,9 +71,50 @@ export interface McpImportListItem {
   name: string;
   price: McpPrice;
   sale_price: McpPrice | null;
+  /** Your cost basis (Hertwill Wholesale Price you pay). Equals `price`; maps
+   *  directly to your store's cost-per-item field. Never reflects Hertwill COGS. */
+  cost: McpPrice;
   stock_status: string;
   sync_status: string;
   added_at: string | null;
+}
+
+/** Transformed brand, including marketing material links. */
+export interface McpBrand {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  /** URL of the brand logo image. */
+  logo: string | null;
+  /** URL of the brand cover/banner image. */
+  cover: string | null;
+  /** Link to the brand's downloadable marketing materials (banners, promo
+   *  images, product photography) for use in your store. */
+  marketing_assets_url: string | null;
+  /** ISO-2 country the brand ships from (use as `origin` for shipping rates). */
+  shipping_origin_iso_code: string | null;
+}
+
+/** A single origin->destination shipping rate lane. */
+export interface McpShippingPrice {
+  origin_iso_code: string;
+  dest_iso_code: string;
+  /** Shipping price for this lane, or null when no rate is defined. */
+  price: McpPrice | null;
+  origin_country: string | null;
+  destination_country: string | null;
+}
+
+/** A brand's shipping price list (coverage tag + per-lane rates). */
+export interface McpShippingPriceList {
+  id: number;
+  /** Coverage tag, e.g. "EU", "EU · UK · USA". */
+  name: string;
+  description: string | null;
+  /** True when the brand ships at least one product on this list per item. */
+  per_item: boolean;
+  shipping_prices: McpShippingPrice[];
 }
 
 /** Transformed sync job */

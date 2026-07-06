@@ -293,7 +293,23 @@
           },
           "logo": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "description": "URL of the brand logo image."
+          },
+          "cover": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL of the brand cover/banner image."
+          },
+          "marketing_assets_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Link to the brand's downloadable marketing materials (banners, promo images, product photography) for use in your store."
+          },
+          "shipping_origin_iso_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "ISO-2 country code the brand ships from. Use as the `origin` filter on the brand shipping price-lists endpoint."
           }
         }
       },
@@ -340,6 +356,63 @@
               "request_id": {
                 "type": "string"
               }
+            }
+          }
+        }
+      },
+      "ShippingPrice": {
+        "type": "object",
+        "description": "A single origin->destination shipping rate lane.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "origin_iso_code": {
+            "type": "string",
+            "description": "ISO-2 origin country code (the brand's shipping origin)."
+          },
+          "dest_iso_code": {
+            "type": "string",
+            "description": "ISO-2 destination country code."
+          },
+          "price": {
+            "type": "number",
+            "nullable": true,
+            "description": "Shipping price for this lane in EUR. null when no rate is defined for the destination."
+          },
+          "origin_country": {
+            "type": "string",
+            "description": "Human-readable origin country name."
+          },
+          "destination_country": {
+            "type": "string",
+            "description": "Human-readable destination country name."
+          }
+        }
+      },
+      "ShippingPriceList": {
+        "type": "object",
+        "description": "A brand's shipping price list. The name is a coverage tag (e.g. \"EU\", \"EU . UK . USA\"). shipping_prices holds one rate per origin->destination lane.",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "Coverage tag for the list (e.g. \"EU\", \"EU . UK . USA\")."
+          },
+          "description": {
+            "type": "string"
+          },
+          "per_item": {
+            "type": "boolean",
+            "description": "True when the brand has at least one public product on this list that ships per item (large/extra-large size class)."
+          },
+          "shipping_prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShippingPrice"
             }
           }
         }
@@ -1980,6 +2053,132 @@
           },
           "404": {
             "description": "API key not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/brands/{id}": {
+      "get": {
+        "tags": [
+          "Brands"
+        ],
+        "operationId": "getBrandById",
+        "summary": "Get brand by ID",
+        "description": "Retrieve a single brand, including its marketing material links (logo, cover, marketing_assets_url) and shipping origin country.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Brand ID (numeric).",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Brand"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Brand not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/brands/{id}/shipping-price-lists": {
+      "get": {
+        "tags": [
+          "Brands"
+        ],
+        "operationId": "getBrandShippingPriceLists",
+        "summary": "Get a brand's shipping price lists",
+        "description": "Returns the brand's shipping price lists (coverage tag + per origin->destination rate).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Brand ID (numeric).",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "origin",
+            "in": "query",
+            "required": false,
+            "description": "Optional ISO-2 origin country code to filter lanes to a single shipping origin.",
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The brand's shipping price lists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ShippingPriceList"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Brand not found",
             "content": {
               "application/json": {
                 "schema": {

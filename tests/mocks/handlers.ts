@@ -191,6 +191,54 @@ export const handlers = [
     );
   }),
 
+  // 7b. GET /v1/brands/:id/shipping-price-lists - brand shipping rates
+  http.get(`${BASE_URL}/v1/brands/:id/shipping-price-lists`, ({ params }) => {
+    return HttpResponse.json(
+      {
+        data: [
+          {
+            id: 10,
+            name: "EU",
+            description: "EU coverage",
+            per_item: false,
+            shipping_prices: [
+              {
+                id: 100,
+                origin_iso_code: "EE",
+                dest_iso_code: "DE",
+                price: 4.5,
+                origin_country: "Estonia",
+                destination_country: "Germany",
+              },
+            ],
+          },
+        ],
+        meta: { request_id: `req-brand-${params.id}-shipping` },
+      },
+      { headers: rateLimitHeaders },
+    );
+  }),
+
+  // 7c. GET /v1/brands/:id - brand detail
+  http.get(`${BASE_URL}/v1/brands/:id`, ({ params }) => {
+    return HttpResponse.json(
+      {
+        data: {
+          id: String(params.id),
+          name: "EcoWear",
+          slug: "ecowear",
+          description: "Sustainable apparel",
+          logo: "https://assets.hertwill.com/brands/ecowear/logo.jpg",
+          cover: "https://assets.hertwill.com/brands/ecowear/cover.jpg",
+          marketing_assets_url: "https://drive.google.com/drive/folders/abc123",
+          shipping_origin_iso_code: "EE",
+        },
+        meta: { request_id: `req-brand-${params.id}` },
+      },
+      { headers: rateLimitHeaders },
+    );
+  }),
+
   // -------------------------------------------------------------------------
   // Authenticated endpoints
   // -------------------------------------------------------------------------
