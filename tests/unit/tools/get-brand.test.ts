@@ -46,7 +46,6 @@ function brandFixture(overrides: Record<string, unknown> = {}) {
       logo: "https://assets.hertwill.com/brands/ecowear/logo.jpg",
       cover: "https://assets.hertwill.com/brands/ecowear/cover.jpg",
       marketing_assets_url: "https://drive.google.com/drive/folders/abc123",
-      shipping_origin_iso_code: "EE",
       ...overrides,
     },
     meta: { request_id: "req-brand" },
