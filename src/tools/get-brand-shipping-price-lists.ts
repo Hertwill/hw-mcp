@@ -32,17 +32,12 @@ export function createGetBrandShippingPriceListsHandler(deps: ToolDeps) {
     }
 
     try {
-      const origin = args.origin ? args.origin.toUpperCase() : undefined;
-      const raw = await deps.client.getBrandShippingPriceLists(
-        args.brand_id,
-        origin,
-      );
+      const raw = await deps.client.getBrandShippingPriceLists(args.brand_id);
       const lists = (raw.data ?? []).map(transformShippingPriceList);
-      const originNote = origin ? ` from ${origin}` : "";
       const text =
         lists.length === 0
-          ? `Brand ${args.brand_id} has no shipping price lists${originNote}.`
-          : `Brand ${args.brand_id}: ${lists.length} shipping price list(s)${originNote} — ${lists
+          ? `Brand ${args.brand_id} has no shipping price lists.`
+          : `Brand ${args.brand_id}: ${lists.length} shipping price list(s) — ${lists
               .map((l) => l.name)
               .join(", ")}.`;
       return toolResult({ data: lists } as Record<string, unknown>, text);

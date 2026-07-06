@@ -85,22 +85,6 @@ describe("get_brand_shipping_price_lists handler", () => {
     expect(result.content[0].text).toMatch(/EU/);
   });
 
-  it("Test 2 — origin filter is forwarded (uppercased) as a query param", async () => {
-    let capturedOrigin: string | null = null;
-    mockServer.use(
-      http.get(
-        `${BASE_URL}/v1/brands/:id/shipping-price-lists`,
-        ({ request }) => {
-          capturedOrigin = new URL(request.url).searchParams.get("origin");
-          return HttpResponse.json(listsFixture());
-        },
-      ),
-    );
-    const handler = createGetBrandShippingPriceListsHandler(buildTestDeps());
-    await handler({ brand_id: 214, origin: "ee" } as never);
-    expect(capturedOrigin).toBe("EE");
-  });
-
   it("Test 3 — empty result summarised", async () => {
     mockServer.use(
       http.get(`${BASE_URL}/v1/brands/:id/shipping-price-lists`, () =>

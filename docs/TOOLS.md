@@ -65,7 +65,7 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 
 ## get_brand
 
-**PURPOSE:** Return one brand by ID, including its marketing material links (`logo`, `cover`, and `marketing_assets_url` for downloadable banners/creatives) and shipping origin country.
+**PURPOSE:** Return one brand by ID, including its marketing material links (`logo`, `cover`, and `marketing_assets_url` for downloadable banners/creatives).
 
 **WHEN TO USE:** The user has a brand ID (from `list_products`, `search_products`, or the brands resource) and wants the brand's assets, marketing materials, or profile.
 
@@ -78,7 +78,7 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 
 **AUTH:** None required.
 
-**RETURNS:** `{id, name, slug, description, logo, cover, marketing_assets_url, shipping_origin_iso_code}`.
+**RETURNS:** `{id, name, slug, description, logo, cover, marketing_assets_url}`.
 
 **EXAMPLE INTENT:** "Give me the marketing banners and logo for brand 214 so I can add them to my store."
 
@@ -86,7 +86,7 @@ A CI test (`tests/unit/tool-descriptions.test.ts`, per D-04) asserts that the re
 
 **PURPOSE:** Return a brand's shipping price lists — each a coverage tag (e.g. "EU") with per origin->destination rates — so you can estimate delivery costs before importing its products.
 
-**WHEN TO USE:** The user wants to know what it costs to ship a brand's products to given countries, or wants to compare brands by shipping coverage. Optionally filter by a 2-letter `origin` ISO country code.
+**WHEN TO USE:** The user wants to know what it costs to ship a brand's products to given countries, or wants to compare brands by shipping coverage.
 
 **DO NOT USE WHEN:**
 - The user wants the brand's marketing assets or profile -> use `get_brand`

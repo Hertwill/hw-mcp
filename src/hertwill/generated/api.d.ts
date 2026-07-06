@@ -1490,8 +1490,6 @@ export interface components {
             cover?: string | null;
             /** @description Link to the brand's downloadable marketing materials (banners, promo images, product photography) for use in your store. */
             marketing_assets_url?: string | null;
-            /** @description ISO-2 country code the brand ships from. Use as the `origin` filter on the brand shipping price-lists endpoint. */
-            shipping_origin_iso_code?: string | null;
         };
         Pagination: {
             page?: number;
@@ -1586,10 +1584,7 @@ export interface operations {
     };
     getBrandShippingPriceLists: {
         parameters: {
-            query?: {
-                /** @description Optional ISO-2 origin country code to filter lanes to a single shipping origin. */
-                origin?: string;
-            };
+            query?: never;
             header?: never;
             path: {
                 /** @description Brand ID (numeric). */

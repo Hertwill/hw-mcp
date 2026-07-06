@@ -26,9 +26,6 @@ export function transformImportListItem(
     name: item.name,
     price: transformPrice(item.price),
     sale_price: transformNullablePrice(item.sale_price),
-    // Cost basis == wholesale price. Fall back to `price` when the API version
-    // predates the explicit `cost` field so the value is always populated.
-    cost: transformPrice(item.cost ?? item.price),
     stock_status: item.stock_status ?? "unknown",
     sync_status: item.sync_status ?? item.status ?? "unknown",
     added_at: normalizeTs(item.added_at ?? item.created_at ?? null),

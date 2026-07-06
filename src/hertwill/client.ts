@@ -340,14 +340,13 @@ export class HertwillClient {
   /** 9. GET /v1/brands/{id}/shipping-price-lists — Brand shipping rates. */
   async getBrandShippingPriceLists(
     id: number,
-    origin?: string,
   ): Promise<BrandShippingPriceListsResponse> {
     return this.request(
       "GET /v1/brands/{id}/shipping-price-lists",
       BrandShippingPriceListsResponseSchema,
       () =>
         this.api.GET("/v1/brands/{id}/shipping-price-lists", {
-          params: { path: { id }, query: origin ? { origin } : {} },
+          params: { path: { id } },
         }),
     );
   }

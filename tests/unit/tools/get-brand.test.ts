@@ -66,13 +66,11 @@ describe("get_brand handler", () => {
     const sc = result.structuredContent as {
       marketing_assets_url: string;
       cover: string;
-      shipping_origin_iso_code: string;
     };
     expect(sc.marketing_assets_url).toBe(
       "https://drive.google.com/drive/folders/abc123",
     );
     expect(sc.cover).toContain("cover.jpg");
-    expect(sc.shipping_origin_iso_code).toBe("EE");
     expect(result.content[0].text).toMatch(/has marketing materials/);
   });
 

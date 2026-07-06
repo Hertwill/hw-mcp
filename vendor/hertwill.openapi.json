@@ -305,11 +305,6 @@
             "type": "string",
             "nullable": true,
             "description": "Link to the brand's downloadable marketing materials (banners, promo images, product photography) for use in your store."
-          },
-          "shipping_origin_iso_code": {
-            "type": "string",
-            "nullable": true,
-            "description": "ISO-2 country code the brand ships from. Use as the `origin` filter on the brand shipping price-lists endpoint."
           }
         }
       },
@@ -2136,17 +2131,6 @@
             "description": "Brand ID (numeric).",
             "schema": {
               "type": "integer"
-            }
-          },
-          {
-            "name": "origin",
-            "in": "query",
-            "required": false,
-            "description": "Optional ISO-2 origin country code to filter lanes to a single shipping origin.",
-            "schema": {
-              "type": "string",
-              "minLength": 2,
-              "maxLength": 2
             }
           }
         ],

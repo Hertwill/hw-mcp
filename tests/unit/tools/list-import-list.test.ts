@@ -92,35 +92,6 @@ describe("list_import_list handler", () => {
     expect(sc.hints.next_step).toMatch(/sync_products|use|call/i);
   });
 
-  it("maps `cost` from the item's explicit cost field when present", async () => {
-    mockServer.use(
-      http.get(`${BASE_URL}/v1/import-list`, () =>
-        HttpResponse.json(makeListFixture([{ ...item(1), cost: 12.5 }])),
-      ),
-    );
-    const handler = createListImportListHandler(buildTestDeps());
-    const result = await handler({} as never);
-    const sc = result.structuredContent as {
-      items: Array<{ cost: { amount: number; currency: string } }>;
-    };
-    expect(sc.items[0].cost).toEqual({ amount: 12.5, currency: "EUR" });
-  });
-
-  it("falls back `cost` to `price` when the item omits cost", async () => {
-    mockServer.use(
-      http.get(`${BASE_URL}/v1/import-list`, () =>
-        HttpResponse.json(makeListFixture([item(1)])),
-      ),
-    );
-    const handler = createListImportListHandler(buildTestDeps());
-    const result = await handler({} as never);
-    const sc = result.structuredContent as {
-      items: Array<{ cost: { amount: number }; price: { amount: number } }>;
-    };
-    expect(sc.items[0].cost.amount).toBe(19.99);
-    expect(sc.items[0].cost).toEqual(sc.items[0].price);
-  });
-
   it("Test 2 — empty list", async () => {
     mockServer.use(
       http.get(`${BASE_URL}/v1/import-list`, emptyImportListResponse),

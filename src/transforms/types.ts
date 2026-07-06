@@ -71,9 +71,6 @@ export interface McpImportListItem {
   name: string;
   price: McpPrice;
   sale_price: McpPrice | null;
-  /** Your cost basis: the Hertwill API sets this equal to `price` (the list
-   *  Wholesale Price, before any `sale_price`), never its internal COGS. */
-  cost: McpPrice;
   stock_status: string;
   sync_status: string;
   added_at: string | null;
@@ -92,8 +89,6 @@ export interface McpBrand {
   /** Link to the brand's downloadable marketing materials (banners, promo
    *  images, product photography) for use in your store. */
   marketing_assets_url: string | null;
-  /** ISO-2 country the brand ships from (use as `origin` for shipping rates). */
-  shipping_origin_iso_code: string | null;
 }
 
 /** A single origin->destination shipping rate lane. */
