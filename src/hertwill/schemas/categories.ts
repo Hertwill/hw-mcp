@@ -55,6 +55,14 @@ export const BrandSchema = z.object({
   logo: z.string().nullable().optional(),
   cover: z.string().nullable().optional(),
   marketing_assets_url: z.string().nullable().optional(),
+  gpsr: z
+    .object({
+      company_name: z.string(),
+      email: z.string(),
+      address: z.string(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export type Brand = z.infer<typeof BrandSchema>;

@@ -15,6 +15,7 @@ export function transformBrand(brand: Brand): McpBrand {
     logo: brand.logo ?? null,
     cover: brand.cover ?? null,
     marketing_assets_url: brand.marketing_assets_url ?? null,
+    gpsr: brand.gpsr ?? null,
   };
 }
 

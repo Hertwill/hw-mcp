@@ -137,7 +137,7 @@ export function transformProductListItem(
       item.id,
     ),
     sku: item.sku,
-    price: transformPrice(item.price),
+    price: transformNullablePrice(item.price),
     sale_price: transformNullablePrice(item.sale_price),
     stock: transformStockInfo(item.stock_status, item.stock),
     brand: normalizeBrand(item.brand),
@@ -168,7 +168,7 @@ export function transformProductDetail(
       id: v.id,
       name: v.name,
       sku: v.sku,
-      price: transformPrice(v.price),
+      price: transformNullablePrice(v.price),
       sale_price: transformNullablePrice(v.sale_price),
       stock: transformStockInfo(
         v.stock_status as "instock" | "outofstock",

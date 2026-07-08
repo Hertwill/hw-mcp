@@ -3,7 +3,11 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { EvaluateProductInput } from "../schemas/evaluate-product.js";
 import {
   transformShipsTo,
@@ -25,8 +29,10 @@ interface EvaluateProductScorecard {
   product_id: number;
   name: string; // wrapped in <untrusted_supplier_content>
   margin_inputs: {
-    cost: number;
-    msrp: number;
+    // null when the caller is not API-key-authenticated (wholesale price is
+    // login-gated). Set HERTWILL_API_KEY to receive pricing.
+    cost: number | null;
+    msrp: number | null;
     currency: "EUR";
   };
   shipping_regions: string[]; // ISO codes via transformShipsTo
@@ -77,7 +83,7 @@ export function createEvaluateProductHandler(deps: ToolDeps) {
         is_on_sale: d.sale_price !== null && d.sale_price !== undefined,
         has_variants: variations.length > 0,
       };
-      const text = `Scorecard for product ${d.id}: stock ${scorecard.stock_state}, ${scorecard.variant_count} variation(s), ships to ${regions.length} region(s)${scorecard.eu_shippable ? " (incl. EU)" : ""}${scorecard.is_on_sale ? ", on sale" : ""}.`;
+      const text = `Scorecard for product ${d.id}: stock ${scorecard.stock_state}, ${scorecard.variant_count} variation(s), ships to ${regions.length} region(s)${scorecard.eu_shippable ? " (incl. EU)" : ""}${scorecard.is_on_sale ? ", on sale" : ""}.${d.price == null ? " Pricing unavailable — set HERTWILL_API_KEY to include wholesale price/margin inputs." : ""}`;
       const result = {
         ...scorecard,
         _display: {

@@ -37,7 +37,7 @@ export interface McpProductListItem {
   name: string; // wrapped in untrusted delimiters
   description: string; // truncated + wrapped in untrusted delimiters
   sku: string;
-  price: McpPrice;
+  price: McpPrice | null;
   sale_price: McpPrice | null;
   stock: McpStockInfo;
   brand: { name: string; slug: string } | null;
@@ -50,7 +50,7 @@ export interface McpVariation {
   id: number;
   name: string;
   sku: string;
-  price: McpPrice;
+  price: McpPrice | null;
   sale_price: McpPrice | null;
   stock: McpStockInfo;
   attributes: { name: string; value: string }[];
@@ -89,6 +89,9 @@ export interface McpBrand {
   /** Link to the brand's downloadable marketing materials (banners, promo
    *  images, product photography) for use in your store. */
   marketing_assets_url: string | null;
+  /** EU GPSR responsible-person contact (company name, email, address); null
+   *  when none on file or the caller is not API-key-authenticated. */
+  gpsr: { company_name: string; email: string; address: string } | null;
 }
 
 /** A single origin->destination shipping rate lane. */
