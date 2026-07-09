@@ -9,7 +9,7 @@ description: >-
   guardrails that prevent common sourcing mistakes. Pairs with the
   @hertwill/mcp server tools for end-to-end product discovery, evaluation,
   import, and store sync.
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # Hertwill Sourcing Playbook

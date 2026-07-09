@@ -1,6 +1,18 @@
 import { z } from "zod";
 import { PaginationMetaSchema } from "./common.js";
 
+// Pricing-gating hint the API attaches when price fields are login-gated. For a
+// keyless caller, price/sale_price come back null and this explains why. Absent
+// on older API responses (which return real numbers) — fully backward-compatible.
+export const PricingMetaSchema = z.object({
+  authenticated: z.boolean().optional(),
+  included: z.boolean().optional(),
+  reason: z.string().optional(),
+  message: z.string().optional(),
+});
+
+export type PricingMeta = z.infer<typeof PricingMetaSchema>;
+
 // Brand shape: the OpenAPI spec says object, but the live search/list
 // endpoints return a plain string (brand name). Accept both; the transform
 // layer normalizes to {name, slug} — when only a string is supplied, slug is
@@ -26,7 +38,7 @@ const VariationSchema = z.object({
   id: z.number(),
   name: z.string(),
   sku: z.string(),
-  price: z.number(),
+  price: z.number().nullable(),
   sale_price: z.number().nullable().optional(),
   image: z.string().nullable().optional(),
   stock: z.number().nullable().optional(),
@@ -69,7 +81,9 @@ export const ProductListItemSchema = z.object({
   name: z.string(),
   description: z.string(),
   sku: z.string(),
-  price: z.number(),
+  // Null when the caller is not API-key-authenticated (login-gated wholesale
+  // price). See meta.pricing on the response for the reason.
+  price: z.number().nullable(),
   sale_price: z.number().nullable().optional(),
   stock: z.number().nullable().optional(),
   stock_status: z.enum(["instock", "outofstock"]),
@@ -100,6 +114,7 @@ export const ProductListResponseSchema = z.object({
     pagination: PaginationMetaSchema,
     facets: z.array(z.unknown()).optional(),
     request_id: z.string().optional(),
+    pricing: PricingMetaSchema.optional(),
   }),
 });
 
@@ -111,6 +126,7 @@ export const ProductDetailResponseSchema = z.object({
   meta: z
     .object({
       request_id: z.string().optional(),
+      pricing: PricingMetaSchema.optional(),
     })
     .optional(),
 });

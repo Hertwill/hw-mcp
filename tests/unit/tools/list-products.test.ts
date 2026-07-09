@@ -1,25 +1,25 @@
-import { createMockMcpServer } from "../../helpers/mock-mcp-server.js";
-import { describe, expect, it, vi } from "vitest";
-import { http, HttpResponse } from "msw";
-import Bottleneck from "bottleneck";
+import type Bottleneck from "bottleneck";
+import { HttpResponse, http } from "msw";
 import pino from "pino";
+import { describe, expect, it, vi } from "vitest";
 import { HertwillClient } from "../../../src/hertwill/client.js";
 import {
-  publicLimiter,
   authLimiter,
+  publicLimiter,
 } from "../../../src/hertwill/rate-limiter.js";
+import { createListProductsHandler } from "../../../src/tools/list-products.js";
 import { RateResetTracker } from "../../../src/tools/rate-reset.js";
 import type { ToolDeps } from "../../../src/tools/types.js";
-import { createListProductsHandler } from "../../../src/tools/list-products.js";
-import { mockServer } from "../../mocks/server.js";
-import {
-  rateLimitedResponse429,
-  serverErrorResponse503,
-} from "../../mocks/handlers.js";
 import {
   expectStructuredAndText,
   expectToolError,
 } from "../../helpers/mcp-assertions.js";
+import { createMockMcpServer } from "../../helpers/mock-mcp-server.js";
+import {
+  rateLimitedResponse429,
+  serverErrorResponse503,
+} from "../../mocks/handlers.js";
+import { mockServer } from "../../mocks/server.js";
 
 const BASE_URL = "https://api.hertwill.com";
 
@@ -64,7 +64,12 @@ function fakeProduct(overrides: Record<string, unknown> = {}) {
 
 function makeListFixture(
   items: unknown[],
-  pagination?: Partial<{ page: number; per_page: number; total: number; page_count: number }>,
+  pagination?: Partial<{
+    page: number;
+    per_page: number;
+    total: number;
+    page_count: number;
+  }>,
 ) {
   return {
     data: items,
@@ -84,13 +89,17 @@ describe("list_products handler", () => {
   it("Test 1 — happy path", async () => {
     mockServer.use(
       http.get(`${BASE_URL}/v1/products`, () =>
-        HttpResponse.json(makeListFixture([fakeProduct(), fakeProduct({ id: 2, slug: "p2" })])),
+        HttpResponse.json(
+          makeListFixture([fakeProduct(), fakeProduct({ id: 2, slug: "p2" })]),
+        ),
       ),
     );
     const handler = createListProductsHandler(buildTestDeps());
     const result = await handler({} as never);
     expectStructuredAndText(result);
-    expect((result.structuredContent as { items: unknown[] }).items.length).toBe(2);
+    expect(
+      (result.structuredContent as { items: unknown[] }).items.length,
+    ).toBe(2);
     expect(result.content[0].text).toMatch(/2.*page 1/);
   });
 
@@ -120,21 +129,30 @@ describe("list_products handler", () => {
     const result = await handler({ per_page: 50 } as never);
     expectStructuredAndText(result);
     expect(observedPerPage).toBe("20");
-    expect(clientSpy).toHaveBeenCalledWith(expect.objectContaining({ per_page: 20 }));
+    expect(clientSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ per_page: 20 }),
+    );
     expect(result.content[0].text).toContain("20");
     expect(result.content[0].text).toMatch(/clamp|budget|reduced/i);
-    expect((result.structuredContent as { pagination: { per_page: number } }).pagination.per_page).toBe(20);
+    expect(
+      (result.structuredContent as { pagination: { per_page: number } })
+        .pagination.per_page,
+    ).toBe(20);
   });
 
   it("Test 4 — 429 upstream error envelope", async () => {
-    mockServer.use(http.get(`${BASE_URL}/v1/products`, rateLimitedResponse429(7)));
+    mockServer.use(
+      http.get(`${BASE_URL}/v1/products`, rateLimitedResponse429(7)),
+    );
     const handler = createListProductsHandler(buildTestDeps());
     const result = await handler({} as never);
     expectToolError(result, /retry|rate|429|unexpected/i);
   }, 15000);
 
   it("Test 5 — 503 upstream after retries", async () => {
-    mockServer.use(http.get(`${BASE_URL}/v1/products`, serverErrorResponse503()));
+    mockServer.use(
+      http.get(`${BASE_URL}/v1/products`, serverErrorResponse503()),
+    );
     const handler = createListProductsHandler(buildTestDeps());
     const result = await handler({} as never);
     expectToolError(result, /error|server|503|unexpected/i);
@@ -148,7 +166,9 @@ describe("list_products handler", () => {
         return HttpResponse.json(makeListFixture([fakeProduct()]));
       }),
     );
-    const fakeLimiter = { currentReservoir: async () => 0 } as unknown as Bottleneck;
+    const fakeLimiter = {
+      currentReservoir: async () => 0,
+    } as unknown as Bottleneck;
     const deps = buildTestDeps({ publicLimiter: fakeLimiter });
     deps.publicRateReset.observe(9);
     const handler = createListProductsHandler(deps);
@@ -184,5 +204,52 @@ describe("list_products handler", () => {
     expect(clientSpy).toHaveBeenCalledWith(
       expect.objectContaining({ sort_by: "sales", sort_order: "desc" }),
     );
+  });
+
+  it("Test 9 — keyless caller: null prices surface a pricing hint", async () => {
+    mockServer.use(
+      http.get(`${BASE_URL}/v1/products`, () => {
+        const fixture = makeListFixture([
+          fakeProduct({ price: null, sale_price: null }),
+        ]);
+        return HttpResponse.json({
+          ...fixture,
+          meta: {
+            ...fixture.meta,
+            pricing: {
+              authenticated: false,
+              included: false,
+              message: "Set HERTWILL_API_KEY to receive wholesale pricing.",
+            },
+          },
+        });
+      }),
+    );
+    const handler = createListProductsHandler(buildTestDeps());
+    const result = await handler({} as never);
+    expectStructuredAndText(result);
+    const env = result.structuredContent as {
+      items: Array<{ price: unknown }>;
+      pricing?: { included: boolean; message?: string };
+    };
+    expect(env.items[0].price).toBeNull();
+    expect(env.pricing).toEqual({
+      included: false,
+      message: "Set HERTWILL_API_KEY to receive wholesale pricing.",
+    });
+    expect(result.content[0].text).toMatch(/Set HERTWILL_API_KEY/);
+  });
+
+  it("Test 10 — authenticated caller: no pricing hint in the envelope", async () => {
+    mockServer.use(
+      http.get(`${BASE_URL}/v1/products`, () =>
+        HttpResponse.json(makeListFixture([fakeProduct()])),
+      ),
+    );
+    const handler = createListProductsHandler(buildTestDeps());
+    const result = await handler({} as never);
+    const env = result.structuredContent as { pricing?: unknown };
+    expect(env.pricing).toBeUndefined();
+    expect(result.content[0].text).not.toMatch(/HERTWILL_API_KEY/);
   });
 });

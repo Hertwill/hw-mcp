@@ -3,9 +3,14 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { ListProductsInput } from "../schemas/list-products.js";
 import {
+  pricingHint,
   transformPagination,
   transformProductListItem,
 } from "../transforms/index.js";
@@ -61,7 +66,13 @@ export function createListProductsHandler(deps: ToolDeps) {
           : {
               next_step: "Use get_product(id) for full detail on any item.",
             };
-      const envelope = { items, pagination, hints };
+      const { pricing, note: pricingNote } = pricingHint(raw.meta);
+      const envelope = {
+        items,
+        pagination,
+        hints,
+        ...(pricing && { pricing }),
+      };
       const clampNote = clamped
         ? ` (per_page reduced to 20 from requested ${args.per_page} to stay within token budget)`
         : "";
@@ -70,7 +81,7 @@ export function createListProductsHandler(deps: ToolDeps) {
           ? "No products match these filters."
           : `Listing ${items.length} product(s) (page ${pagination.page}${
               pagination.has_more ? ", more available" : ""
-            })${clampNote}.`;
+            })${clampNote}.${pricingNote}`;
       return toolResult(
         envelope as unknown as Record<string, unknown>,
         countText,

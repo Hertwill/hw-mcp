@@ -1,6 +1,6 @@
 {
   "name": "@hertwill/mcp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "MCP server wrapping the Hertwill dropshipping API for AI agent product sourcing",
   "repository": {
     "type": "git",

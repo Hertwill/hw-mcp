@@ -1,9 +1,11 @@
 import type {
+  PricingMeta,
   ProductDetail,
   ProductListItem,
 } from "../hertwill/schemas/products.js";
 import type {
   McpPrice,
+  McpPricingMeta,
   McpProductDetail,
   McpProductListItem,
   McpStockInfo,
@@ -11,6 +13,30 @@ import type {
 
 /** Named constant for "low" stock threshold (Research Open Question 1). */
 export const LOW_STOCK_THRESHOLD = 5;
+
+/** Fallback shown when the API withheld prices but sent no message of its own. */
+export const PRICING_WITHHELD_NOTE =
+  "Pricing unavailable — set HERTWILL_API_KEY to receive wholesale prices.";
+
+/**
+ * Derive the agent-facing pricing hint from a response's `meta.pricing`.
+ *
+ * The API attaches `meta.pricing.included === false` (with a `message`) when
+ * wholesale price fields are login-gated for a keyless caller. Returns the
+ * structured hint to embed in the tool output plus a leading-space text `note`
+ * to append to the summary line. When pricing is authenticated/included — or
+ * absent on older responses that carry real numbers — both are empty so the
+ * output is unchanged.
+ */
+export function pricingHint(meta?: { pricing?: PricingMeta }): {
+  pricing?: McpPricingMeta;
+  note: string;
+} {
+  const p = meta?.pricing;
+  if (!p || p.included !== false) return { note: "" };
+  const message = p.message ?? PRICING_WITHHELD_NOTE;
+  return { pricing: { included: false, message }, note: ` ${message}` };
+}
 
 /**
  * Max description length in list responses before truncation.
@@ -137,7 +163,7 @@ export function transformProductListItem(
       item.id,
     ),
     sku: item.sku,
-    price: transformPrice(item.price),
+    price: transformNullablePrice(item.price),
     sale_price: transformNullablePrice(item.sale_price),
     stock: transformStockInfo(item.stock_status, item.stock),
     brand: normalizeBrand(item.brand),
@@ -168,7 +194,7 @@ export function transformProductDetail(
       id: v.id,
       name: v.name,
       sku: v.sku,
-      price: transformPrice(v.price),
+      price: transformNullablePrice(v.price),
       sale_price: transformNullablePrice(v.sale_price),
       stock: transformStockInfo(
         v.stock_status as "instock" | "outofstock",

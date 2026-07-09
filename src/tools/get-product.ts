@@ -4,9 +4,13 @@ import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
 import { logger } from "../logger.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { GetProductInput } from "../schemas/get-product.js";
-import { transformProductDetail } from "../transforms/index.js";
+import { pricingHint, transformProductDetail } from "../transforms/index.js";
 import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
@@ -30,14 +34,21 @@ export function createGetProductHandler(deps: ToolDeps) {
 
     try {
       const raw = await deps.client.getProduct(args.product_id);
-      const detail = transformProductDetail(raw.data);
+      const { pricing, note: pricingNote } = pricingHint(raw.meta);
+      const detail = {
+        ...transformProductDetail(raw.data),
+        ...(pricing && { pricing }),
+      };
       const variationCount = detail.variations.length;
       const variationText =
         variationCount === 0
           ? "no variations"
           : `${variationCount} variation${variationCount === 1 ? "" : "s"}`;
-      const priceText = `€${detail.price.amount.toFixed(2)}`;
-      const text = `Product ${detail.id}: "${raw.data.name}" — ${priceText}, stock ${detail.stock.stock_level}, ${variationText}.`;
+      // price is null for keyless callers once the API gates wholesale pricing.
+      const priceText = detail.price
+        ? `€${detail.price.amount.toFixed(2)}`
+        : "price unavailable";
+      const text = `Product ${detail.id}: "${raw.data.name}" — ${priceText}, stock ${detail.stock.stock_level}, ${variationText}.${pricingNote}`;
       const result = toolResult(
         detail as unknown as Record<string, unknown>,
         text,

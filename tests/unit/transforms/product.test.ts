@@ -5,6 +5,8 @@ import type {
 } from "../../../src/hertwill/schemas/products.js";
 import {
   MAX_LIST_DESCRIPTION_LENGTH,
+  PRICING_WITHHELD_NOTE,
+  pricingHint,
   transformNullablePrice,
   transformPrice,
   transformProductDetail,
@@ -41,6 +43,37 @@ describe("transformPrice (CONTRACT-05)", () => {
 
   it("transformNullablePrice wraps a number", () => {
     expect(transformNullablePrice(5)).toEqual({ amount: 5, currency: "EUR" });
+  });
+});
+
+describe("pricingHint", () => {
+  it("returns an empty hint when meta is absent (older API responses)", () => {
+    expect(pricingHint(undefined)).toEqual({ note: "" });
+    expect(pricingHint({})).toEqual({ note: "" });
+  });
+
+  it("returns an empty hint when pricing is included (authenticated caller)", () => {
+    expect(pricingHint({ pricing: { included: true } })).toEqual({ note: "" });
+  });
+
+  it("surfaces the API message when pricing is withheld", () => {
+    const result = pricingHint({
+      pricing: { included: false, message: "Send an API key to see prices." },
+    });
+    expect(result.pricing).toEqual({
+      included: false,
+      message: "Send an API key to see prices.",
+    });
+    expect(result.note).toBe(" Send an API key to see prices.");
+  });
+
+  it("falls back to the default note when withheld with no message", () => {
+    const result = pricingHint({ pricing: { included: false } });
+    expect(result.pricing).toEqual({
+      included: false,
+      message: PRICING_WITHHELD_NOTE,
+    });
+    expect(result.note).toBe(` ${PRICING_WITHHELD_NOTE}`);
   });
 });
 
@@ -114,7 +147,9 @@ describe("transformShipsTo (CONTRACT-09)", () => {
   });
 });
 
-function makeListItem(overrides: Partial<ProductListItem> = {}): ProductListItem {
+function makeListItem(
+  overrides: Partial<ProductListItem> = {},
+): ProductListItem {
   return {
     id: 1,
     slug: "test-product",
@@ -146,7 +181,9 @@ function makeListItem(overrides: Partial<ProductListItem> = {}): ProductListItem
 describe("transformProductListItem", () => {
   it("truncates description to MAX_LIST_DESCRIPTION_LENGTH chars + ...", () => {
     const longDesc = "a".repeat(MAX_LIST_DESCRIPTION_LENGTH + 100);
-    const out = transformProductListItem(makeListItem({ description: longDesc, id: 42 }));
+    const out = transformProductListItem(
+      makeListItem({ description: longDesc, id: 42 }),
+    );
     // description is wrapped in delimiters, inner text truncated to MAX + "..."
     expect(out.description).toContain(
       `<untrusted_supplier_content product_id="42">`,

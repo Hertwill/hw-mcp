@@ -4,6 +4,8 @@ export { transformPagination } from "./pagination.js";
 export {
   LOW_STOCK_THRESHOLD,
   MAX_LIST_DESCRIPTION_LENGTH,
+  PRICING_WITHHELD_NOTE,
+  pricingHint,
   transformNullablePrice,
   transformPrice,
   transformProductDetail,
@@ -20,6 +22,7 @@ export type {
   McpListEnvelope,
   McpPagination,
   McpPrice,
+  McpPricingMeta,
   McpProductDetail,
   McpProductListItem,
   McpShippingPrice,

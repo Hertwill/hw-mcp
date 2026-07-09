@@ -3,9 +3,14 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { SearchProductsInput } from "../schemas/search-products.js";
 import {
+  pricingHint,
   transformPagination,
   transformProductListItem,
 } from "../transforms/index.js";
@@ -59,7 +64,13 @@ export function createSearchProductsHandler(deps: ToolDeps) {
         : {
             next_step: "Use get_product(id) for full detail on any item.",
           };
-      const envelope = { items, pagination, hints };
+      const { pricing, note: pricingNote } = pricingHint(raw.meta);
+      const envelope = {
+        items,
+        pagination,
+        hints,
+        ...(pricing && { pricing }),
+      };
       const clampNote = clamped
         ? ` (clamped to ${per_page} from requested ${args.per_page} for token budget)`
         : "";
@@ -68,7 +79,7 @@ export function createSearchProductsHandler(deps: ToolDeps) {
           ? `No products found for "${args.query}".`
           : `Found ${items.length} product(s) matching "${args.query}" (page ${pagination.page}${
               pagination.has_more ? ", more available" : ""
-            })${clampNote}.`;
+            })${clampNote}.${pricingNote}`;
       return toolResult(
         envelope as unknown as Record<string, unknown>,
         countText,
