@@ -23,11 +23,26 @@ export interface McpHints {
   next_step: string;
 }
 
+/**
+ * Pricing-gating hint surfaced to agents when wholesale prices are login-gated.
+ *
+ * Mirrors the API's `meta.pricing`: when a keyless caller hits a price-gated
+ * endpoint, `price`/`sale_price` come back null and `included` is false with a
+ * human-readable `message` explaining how to get them. Absent when pricing is
+ * authenticated or the API predates the gate (real numbers, no explanation needed).
+ */
+export interface McpPricingMeta {
+  included: boolean;
+  message?: string;
+}
+
 /** Generic list envelope - CONTRACT-08 */
 export interface McpListEnvelope<T> {
   items: T[];
   pagination: McpPagination;
   hints: McpHints;
+  /** Present only when wholesale pricing was withheld (keyless caller). */
+  pricing?: McpPricingMeta;
 }
 
 /** Transformed product for list responses */
@@ -62,6 +77,8 @@ export interface McpProductDetail extends McpProductListItem {
   ships_to: string[]; // ISO country codes - CONTRACT-09
   category: { name: string; slug: string } | null;
   variations: McpVariation[];
+  /** Present only when wholesale pricing was withheld (keyless caller). */
+  pricing?: McpPricingMeta;
 }
 
 /** Transformed import list item */

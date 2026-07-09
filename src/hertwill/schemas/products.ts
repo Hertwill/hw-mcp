@@ -11,6 +11,8 @@ export const PricingMetaSchema = z.object({
   message: z.string().optional(),
 });
 
+export type PricingMeta = z.infer<typeof PricingMetaSchema>;
+
 // Brand shape: the OpenAPI spec says object, but the live search/list
 // endpoints return a plain string (brand name). Accept both; the transform
 // layer normalizes to {name, slug} — when only a string is supplied, slug is

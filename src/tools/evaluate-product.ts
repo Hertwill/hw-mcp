@@ -10,6 +10,7 @@ import {
 } from "../schemas/descriptions.js";
 import { EvaluateProductInput } from "../schemas/evaluate-product.js";
 import {
+  pricingHint,
   transformShipsTo,
   transformStockInfo,
   wrapUntrustedContent,
@@ -83,7 +84,15 @@ export function createEvaluateProductHandler(deps: ToolDeps) {
         is_on_sale: d.sale_price !== null && d.sale_price !== undefined,
         has_variants: variations.length > 0,
       };
-      const text = `Scorecard for product ${d.id}: stock ${scorecard.stock_state}, ${scorecard.variant_count} variation(s), ships to ${regions.length} region(s)${scorecard.eu_shippable ? " (incl. EU)" : ""}${scorecard.is_on_sale ? ", on sale" : ""}.${d.price == null ? " Pricing unavailable — set HERTWILL_API_KEY to include wholesale price/margin inputs." : ""}`;
+      // Prefer the API's own pricing explanation (meta.pricing); fall back to a
+      // local hint if price is null but no meta was sent (older API responses).
+      const { note: pricingNote } = pricingHint(raw.meta);
+      const priceHint =
+        pricingNote ||
+        (d.price == null
+          ? " Pricing unavailable — set HERTWILL_API_KEY to include wholesale price/margin inputs."
+          : "");
+      const text = `Scorecard for product ${d.id}: stock ${scorecard.stock_state}, ${scorecard.variant_count} variation(s), ships to ${regions.length} region(s)${scorecard.eu_shippable ? " (incl. EU)" : ""}${scorecard.is_on_sale ? ", on sale" : ""}.${priceHint}`;
       const result = {
         ...scorecard,
         _display: {
