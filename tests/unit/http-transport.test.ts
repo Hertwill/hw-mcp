@@ -1,88 +1,80 @@
 import { createServer as createHttpServer } from "node:http";
-import { randomUUID } from "node:crypto";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import type { AddressInfo } from "node:net";
 import { http, passthrough } from "msw";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { createServer } from "../../src/server.js";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { RateLimiterRegistry } from "../../src/hertwill/rate-limiter.js";
+import { createMcpHttpHandler } from "../../src/http.js";
 import { mockServer } from "../mocks/server.js";
 
-const TEST_PORT = 19876;
-const BASE_URL = `http://127.0.0.1:${TEST_PORT}`;
+function parseSseOrJsonPayload(text: string): Record<string, unknown> {
+  if (text.startsWith("{")) {
+    return JSON.parse(text) as Record<string, unknown>;
+  }
 
-/** Passthrough handler letting real HTTP requests reach our local test server. */
-const localPassthrough = http.all(`${BASE_URL}/:path*`, () => passthrough());
-const localRootPassthrough = http.all(BASE_URL, () => passthrough());
+  const dataLines = text
+    .split("\n")
+    .filter((line) => line.startsWith("data: "));
+  const payload = dataLines.at(-1)?.slice("data: ".length);
+  if (!payload) {
+    throw new Error(`Missing JSON-RPC payload in response: ${text}`);
+  }
+
+  return JSON.parse(payload) as Record<string, unknown>;
+}
 
 describe("HTTP remote transport", () => {
+  let baseUrl = "";
   let httpServer: ReturnType<typeof createHttpServer>;
   let registry: RateLimiterRegistry;
-  const sessions = new Map<string, StreamableHTTPServerTransport>();
 
-  // Re-register passthrough before each test because the global afterEach
-  // in tests/setup.ts calls mockServer.resetHandlers() which clears them.
+  const registerLocalPassthrough = () => {
+    if (!baseUrl) return;
+    mockServer.use(
+      http.all(baseUrl, () => passthrough()),
+      http.all(`${baseUrl}/:path*`, () => passthrough()),
+    );
+  };
+
   beforeEach(() => {
-    mockServer.use(localPassthrough, localRootPassthrough);
+    registerLocalPassthrough();
   });
 
   beforeAll(
     () =>
-      new Promise<void>((resolve) => {
-        mockServer.use(localPassthrough, localRootPassthrough);
+      new Promise<void>((resolve, reject) => {
         registry = new RateLimiterRegistry();
+        httpServer = createHttpServer(createMcpHttpHandler({ registry }));
 
-        httpServer = createHttpServer(async (req, res) => {
-          const url = new URL(req.url ?? "/", BASE_URL);
-          if (url.pathname !== "/mcp") {
-            res.writeHead(404).end();
+        httpServer.once("error", reject);
+        httpServer.listen(0, "127.0.0.1", () => {
+          const address = httpServer.address() as AddressInfo | null;
+          if (!address) {
+            reject(
+              new Error("HTTP test server did not expose a bound address"),
+            );
             return;
           }
 
-          if (req.method === "POST") {
-            const chunks: Buffer[] = [];
-            for await (const chunk of req) {
-              chunks.push(
-                typeof chunk === "string" ? Buffer.from(chunk) : chunk,
-              );
-            }
-            const body = JSON.parse(Buffer.concat(chunks).toString());
-
-            const sessionId = req.headers["mcp-session-id"] as
-              | string
-              | undefined;
-            let transport = sessionId ? sessions.get(sessionId) : undefined;
-
-            if (!transport) {
-              transport = new StreamableHTTPServerTransport({
-                sessionIdGenerator: () => randomUUID(),
-                onsessioninitialized: (id) => sessions.set(id, transport!),
-                onsessionclosed: (id) => sessions.delete(id),
-              });
-
-              const server = createServer({ registry });
-              await server.connect(transport);
-            }
-
-            await transport.handleRequest(req, res, body);
-          } else {
-            res.writeHead(405).end();
-          }
+          baseUrl = `http://127.0.0.1:${address.port}`;
+          registerLocalPassthrough();
+          resolve();
         });
-
-        httpServer.listen(TEST_PORT, "127.0.0.1", resolve);
       }),
   );
 
   afterAll(
     () =>
-      new Promise<void>((resolve) => {
+      new Promise<void>((resolve, reject) => {
         registry.dispose();
-        httpServer.close(() => resolve());
+        httpServer.close((error) => {
+          if (error) reject(error);
+          else resolve();
+        });
       }),
   );
 
-  it("accepts initialize JSON-RPC and returns valid response", async () => {
-    const res = await fetch(`${BASE_URL}/mcp`, {
+  it("accepts initialize and reuses the negotiated session for follow-up requests", async () => {
+    const initRes = await fetch(`${baseUrl}/mcp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -100,38 +92,117 @@ describe("HTTP remote transport", () => {
       }),
     });
 
-    expect(res.status).toBe(200);
-    const text = await res.text();
-    // SSE format: each event starts with "event:" or "data:"
-    // OR direct JSON response — handle both
-    let data: Record<string, unknown>;
-    if (text.startsWith("{")) {
-      data = JSON.parse(text);
-    } else {
-      // Parse SSE: extract the last data: line
-      const dataLines = text
-        .split("\n")
-        .filter((l) => l.startsWith("data: "));
-      const lastData = dataLines[dataLines.length - 1];
-      data = JSON.parse(lastData.replace("data: ", ""));
-    }
+    expect(initRes.status).toBe(200);
+    const sessionId = initRes.headers.get("mcp-session-id");
+    expect(sessionId).toBeTruthy();
 
-    expect(data).toHaveProperty("jsonrpc", "2.0");
-    expect(data).toHaveProperty("id", 1);
-    expect(data).toHaveProperty("result");
-    const result = data.result as Record<string, unknown>;
-    expect(result).toHaveProperty("serverInfo");
-    const serverInfo = result.serverInfo as Record<string, unknown>;
-    expect(serverInfo.name).toBe("hertwill-mcp");
+    const initPayload = parseSseOrJsonPayload(await initRes.text());
+    expect(initPayload).toHaveProperty("jsonrpc", "2.0");
+    expect(initPayload).toHaveProperty("id", 1);
+
+    const followUpRes = await fetch(`${baseUrl}/mcp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+        "Mcp-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": sessionId ?? "",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 2,
+        method: "tools/list",
+        params: {},
+      }),
+    });
+
+    expect(followUpRes.status).toBe(200);
+    const followUpPayload = parseSseOrJsonPayload(await followUpRes.text());
+    expect(followUpPayload).toHaveProperty("id", 2);
+    expect(followUpPayload).toHaveProperty("result");
+  });
+
+  it("returns a JSON-RPC parse error for malformed POST bodies", async () => {
+    const res = await fetch(`${baseUrl}/mcp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      body: '{"jsonrpc":"2.0"',
+    });
+
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({
+      jsonrpc: "2.0",
+      error: {
+        code: -32700,
+        message: "Parse error: Invalid JSON",
+      },
+      id: null,
+    });
+  });
+
+  it("rejects non-initialize POSTs that do not include a valid session id", async () => {
+    const res = await fetch(`${baseUrl}/mcp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/list",
+        params: {},
+      }),
+    });
+
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "Bad Request: No valid session ID provided",
+      },
+      id: null,
+    });
+  });
+
+  it("returns 404 when the client sends an unknown session id", async () => {
+    const res = await fetch(`${baseUrl}/mcp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+        "Mcp-Session-Id": "deadbeef-session",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/list",
+        params: {},
+      }),
+    });
+
+    expect(res.status).toBe(404);
+    await expect(res.json()).resolves.toMatchObject({
+      jsonrpc: "2.0",
+      error: {
+        code: -32001,
+        message: "Session not found",
+      },
+      id: null,
+    });
   });
 
   it("returns 404 for non-MCP paths", async () => {
-    const res = await fetch(`${BASE_URL}/health`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/health`, { method: "POST" });
     expect(res.status).toBe(404);
   });
 
-  it("returns 405 for non-POST methods on /mcp", async () => {
-    const res = await fetch(`${BASE_URL}/mcp`, { method: "PUT" });
+  it("returns 405 for unsupported methods on /mcp", async () => {
+    const res = await fetch(`${baseUrl}/mcp`, { method: "PUT" });
     expect(res.status).toBe(405);
   });
 
