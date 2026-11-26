@@ -64,6 +64,7 @@ export function createServer(overrides?: CreateServerOverrides): McpServer {
   const limiters = registry.get(apiKey);
   const client = new HertwillClient({
     apiKey,
+    userAgent: `@hertwill/mcp/${pkg.version}`,
     limiter: apiKey ? limiters.auth : limiters.public,
   });
   const server = new McpServer({

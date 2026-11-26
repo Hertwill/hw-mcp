@@ -1,6 +1,6 @@
 {
   "name": "@hertwill/mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server wrapping the Hertwill dropshipping API for AI agent product sourcing",
   "repository": {
     "type": "git",
@@ -48,22 +48,23 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "bottleneck": "^2.19.5",
     "openapi-fetch": "^0.17.0",
     "p-retry": "^6.2.1",
-    "pino": "^10.3",
-    "zod": "^4.3"
+    "pino": "^10.4.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4",
-    "@types/node": "^20.17",
-    "msw": "^2.13.2",
+    "@biomejs/biome": "^2.6.9",
+    "@types/node": "^20.19.43",
+    "msw": "^2.15.0",
     "openapi-typescript": "^7.13.0",
-    "tsup": "^8.5",
-    "tsx": "^4.21",
-    "typescript": "^5.7",
-    "vitest": "^4.1"
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.4.0",
+    "vitest": "^4.1.12"
   },
   "packageManager": "pnpm@10.15.1"
 }

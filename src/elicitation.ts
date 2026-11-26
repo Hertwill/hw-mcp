@@ -41,7 +41,9 @@ export async function confirmAction(
       return false;
     }
 
-    return result.data?.confirmed === true;
+    return (
+      (result.data as { confirmed?: unknown } | undefined)?.confirmed === true
+    );
   } catch {
     // Client doesn't support elicitation — deny by default.
     // Destructive actions require explicit user confirmation; silently

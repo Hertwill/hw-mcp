@@ -3,7 +3,11 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { ListImportListInput } from "../schemas/list-import-list.js";
 import {
   transformImportListItem,
@@ -47,6 +51,7 @@ export function createListImportListHandler(deps: ToolDeps) {
       const { pagination, hints: baseHints } = transformPagination(
         raw.meta?.pagination,
         "list_import_list",
+        items.length,
       );
       const hints = clamped
         ? {

@@ -1,4 +1,4 @@
-import pRetry from "p-retry";
+import pRetry, { type Options } from "p-retry";
 import { parseRateLimitHeader } from "./rate-limiter.js";
 
 /** Status codes that are safe to retry. */
@@ -57,7 +57,7 @@ export function getRetryDelay(response: Response): number {
  * - 429 errors respect `retryAfterSeconds` from the error when available,
  *   overriding the generic exponential backoff with the server-specified delay.
  */
-export function createRetryOptions(): pRetry.Options {
+export function createRetryOptions(): Options {
   return {
     retries: 3,
     minTimeout: 1_000,
