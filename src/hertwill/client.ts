@@ -56,6 +56,8 @@ import {
 export interface HertwillClientConfig {
   /** Hertwill API key (hw_live_...). If set, authenticated endpoints are available. */
   apiKey?: string;
+  /** Sent as User-Agent, e.g. `@hertwill/mcp/1.2.1`, so the API can count this client (HER-1305). */
+  userAgent?: string;
   /** Base URL for the Hertwill API. Defaults to https://api.hertwill.com */
   baseUrl?: string;
   /** Rate limiter to use. If omitted, uses the default module-level singleton. */
@@ -80,9 +82,10 @@ export class HertwillClient {
     this.baseUrl = config.baseUrl ?? "https://api.hertwill.com";
     this.api = createClient<paths>({
       baseUrl: this.baseUrl,
-      headers: config.apiKey
-        ? { Authorization: `Bearer ${config.apiKey}` }
-        : {},
+      headers: {
+        ...(config.userAgent ? { "User-Agent": config.userAgent } : {}),
+        ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
+      },
     });
     this.limiter =
       config.limiter ?? (config.apiKey ? authLimiter : publicLimiter);

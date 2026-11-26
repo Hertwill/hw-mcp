@@ -25,6 +25,31 @@ describe("HertwillClient", () => {
     });
   });
 
+  // HER-1305: the API counts our MCP apart from other clients by this header.
+  it("names itself in the User-Agent, with and without a key", async () => {
+    const seen: (string | null)[] = [];
+    mockServer.use(
+      http.get(`${BASE_URL}/v1/products/:id`, ({ request }) => {
+        seen.push(request.headers.get("user-agent"));
+        return HttpResponse.json({
+          data: { id: 1, name: "P", sku: "S" },
+        });
+      }),
+    );
+    const ua = new HertwillClient({
+      baseUrl: BASE_URL,
+      userAgent: "@hertwill/mcp/9.9.9",
+    });
+    const keyed = new HertwillClient({
+      apiKey: "test-key-123",
+      baseUrl: BASE_URL,
+      userAgent: "@hertwill/mcp/9.9.9",
+    });
+    await ua.getProduct(1).catch(() => undefined);
+    await keyed.getProduct(1).catch(() => undefined);
+    expect(seen).toEqual(["@hertwill/mcp/9.9.9", "@hertwill/mcp/9.9.9"]);
+  });
+
   // -------------------------------------------------------------------------
   // Public endpoints
   // -------------------------------------------------------------------------
