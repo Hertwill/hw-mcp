@@ -2,7 +2,11 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { CalculateMarginInput } from "../schemas/calculate-margin.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";
 
@@ -22,7 +26,6 @@ const round3 = (n: number) => Math.round(n * 1000) / 1000;
  * Pure: zero network calls, no client/SDK dependency. Verified by msw's
  * onUnhandledRequest:"error" plus a source grep in the test.
  */
-// biome-ignore lint/correctness/noUnusedFunctionParameters: deps kept for symmetry across tool handler signatures
 export function createCalculateMarginHandler(_deps: ToolDeps) {
   return async (args: Args): Promise<CallToolResult> => {
     const cost = args.cost;

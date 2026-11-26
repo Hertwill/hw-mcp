@@ -3,7 +3,11 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { GetSyncJobsInput } from "../schemas/get-sync-jobs.js";
 import { transformPagination, transformSyncJob } from "../transforms/index.js";
 import { clampPerPage, requireApiKey, toolResult } from "./helpers.js";
@@ -40,8 +44,9 @@ export function createGetSyncJobsHandler(deps: ToolDeps) {
       });
       const items = raw.data.map(transformSyncJob);
       const { pagination, hints: baseHints } = transformPagination(
-        raw.meta.pagination,
+        raw.meta?.pagination,
         "get_sync_jobs",
+        items.length,
       );
       const hints = clamped
         ? {

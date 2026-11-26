@@ -4,7 +4,11 @@ import type { z } from "zod";
 import { confirmAction } from "../elicitation.js";
 import { HertwillApiError } from "../errors/api-error.js";
 import { mapHertwillError } from "../errors/map.js";
-import { TOOL_ANNOTATIONS, TOOL_DESCRIPTIONS, TOOL_TITLES } from "../schemas/descriptions.js";
+import {
+  TOOL_ANNOTATIONS,
+  TOOL_DESCRIPTIONS,
+  TOOL_TITLES,
+} from "../schemas/descriptions.js";
 import { SyncProductsInput } from "../schemas/sync-products.js";
 import { requireApiKey, toolResult } from "./helpers.js";
 import type { ToolDeps } from "./types.js";

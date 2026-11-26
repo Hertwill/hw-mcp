@@ -48,10 +48,10 @@ if (config.transport === "http") {
 
       if (!transport) {
         // New session — create transport + server
-        transport = new StreamableHTTPServerTransport({
+        const created = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => randomUUID(),
           onsessioninitialized: (id) => {
-            sessions.set(id, transport!);
+            sessions.set(id, created);
             logger.info({ sessionId: id }, "MCP session initialized");
           },
           onsessionclosed: (id) => {
@@ -59,6 +59,7 @@ if (config.transport === "http") {
             logger.info({ sessionId: id }, "MCP session closed");
           },
         });
+        transport = created;
 
         const server = createServer({
           apiKey,

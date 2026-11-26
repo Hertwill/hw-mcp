@@ -7,9 +7,12 @@ import type { McpHints, McpPagination } from "./types.js";
  * string telling the agent exactly how to fetch the next page (or that it's done).
  */
 export function transformPagination(
-  meta: PaginationMeta,
+  meta: PaginationMeta | undefined,
   toolName: string,
+  itemCount = 0,
 ): { pagination: McpPagination; hints: McpHints } {
+  // No meta from the API: one page holding what came back, instead of a crash.
+  meta ??= { page: 1, per_page: itemCount, total: itemCount, page_count: 1 };
   const hasMore = meta.page < meta.page_count;
   return {
     pagination: {
