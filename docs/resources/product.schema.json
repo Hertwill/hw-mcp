@@ -61,13 +61,9 @@
       "additionalProperties": false,
       "properties": {
         "featured": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
+          "type": [
+            "string",
+            "null"
           ]
         },
         "gallery": {
