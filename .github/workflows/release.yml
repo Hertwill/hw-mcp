@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # Required for npm provenance (OIDC)
+  id-token: write # npm trusted publishing (OIDC) and provenance: no npm token
 
 jobs:
   publish:
@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
 
@@ -32,7 +32,9 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      # Trusted publishing needs npm >= 11.5.1; Node 24 may ship an older one.
+      - name: Update npm
+        run: npm install -g npm@11
+
       - name: Publish to npm with provenance
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
